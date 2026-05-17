@@ -1,0 +1,14 @@
+[package]
+name = "tacboy"
+version = "0.1.0"
+
+[dependencies]
+core = { hash = "blake3:e30eabced26cc345212d71b7f3503af58c0c9b14ff7a54e8c17a60137287380d", source = { registry = "builtin", name = "tacit.core" } }
+bytes = { hash = "blake3:4bf527981416710fa4b67f1ea7c2172177b2b8133c9cf4a0fc8f2511793cf693", source = { registry = "builtin", name = "tacit.bytes" } }
+array = { hash = "blake3:280977dd044ab537658d770dd0cd8a2a33b9873fb57b719a478617850f1ddbfb", source = { registry = "builtin", name = "tacit.array" } }
+text = { hash = "blake3:98fc53407a4fb35e9fa869e9ba045fc3c4e4497a1537bc099d69c14e45ecf0d4", source = { registry = "builtin", name = "tacit.text" } }
+collections = { hash = "blake3:618e92f562755167288bd23bc82a16a02035d39e2c2852e3fd5d60e5072d65b3", source = { registry = "builtin", name = "tacit.collections" } }
+io = { hash = "blake3:624b3278c9e6fa5421589e8dcfa7b11e595a8566ade2d6a124ce6a10c0c6825d", source = { registry = "builtin", name = "tacit.io" } }
+
+[exports]
+run_demo = "blake3:0045aea4368f20c09a1bb22b9abeccd6dfd164f6931c62e31dd4afa664737038"

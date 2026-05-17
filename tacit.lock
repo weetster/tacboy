@@ -1,0 +1,63 @@
+{
+  "format": "tacit-lock-v1",
+  "package": {
+    "hash": "blake3:dcb61de373652ff91e1dbf43871219e54e19cca737ce77739407fbbdfa0ef1aa"
+  },
+  "dependencies": [
+    {
+      "alias": "array",
+      "hash": "blake3:280977dd044ab537658d770dd0cd8a2a33b9873fb57b719a478617850f1ddbfb",
+      "source": {
+        "kind": "cache",
+        "name": "tacit.array",
+        "registry": "builtin"
+      }
+    },
+    {
+      "alias": "bytes",
+      "hash": "blake3:4bf527981416710fa4b67f1ea7c2172177b2b8133c9cf4a0fc8f2511793cf693",
+      "source": {
+        "kind": "cache",
+        "name": "tacit.bytes",
+        "registry": "builtin"
+      }
+    },
+    {
+      "alias": "collections",
+      "hash": "blake3:618e92f562755167288bd23bc82a16a02035d39e2c2852e3fd5d60e5072d65b3",
+      "source": {
+        "kind": "cache",
+        "name": "tacit.collections",
+        "registry": "builtin"
+      }
+    },
+    {
+      "alias": "core",
+      "hash": "blake3:e30eabced26cc345212d71b7f3503af58c0c9b14ff7a54e8c17a60137287380d",
+      "source": {
+        "kind": "cache",
+        "name": "tacit.core",
+        "registry": "builtin"
+      }
+    },
+    {
+      "alias": "io",
+      "hash": "blake3:624b3278c9e6fa5421589e8dcfa7b11e595a8566ade2d6a124ce6a10c0c6825d",
+      "source": {
+        "kind": "cache",
+        "name": "tacit.io",
+        "registry": "builtin"
+      }
+    },
+    {
+      "alias": "text",
+      "hash": "blake3:98fc53407a4fb35e9fa869e9ba045fc3c4e4497a1537bc099d69c14e45ecf0d4",
+      "source": {
+        "kind": "cache",
+        "name": "tacit.text",
+        "registry": "builtin"
+      }
+    }
+  ],
+  "transitive": []
+}

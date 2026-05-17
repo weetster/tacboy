@@ -1,0 +1,8 @@
+[package]
+name = "tacboy-host"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "tacboy-host"
+path = "src/main.rs"
