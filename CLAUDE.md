@@ -18,13 +18,19 @@ limits), SDL window/audio, stdout, input polling. Host imports are declared
 in Tacit as capability callbacks and satisfied by implementing the generated
 `TacboyCallbacks` trait in `host/src/main.rs`.
 
-**Current state.** Stage 0 is done: toolchain pinned, Shape B skeleton wired
-end-to-end through the host trait, dispatch loop uses an immediate `@loop`
-callback (the 0.7.6 form that may capture typed-vector handles from outer
-scope). `src/main.tac` still runs a 4-instruction toy VM (LD A,n / LD B,n /
-ADD A,B / HALT) on a ROM passed in as a `u8vec` borrow; `cargo run` from
-`host/` prints the result of one tiny program. Stage 1 (real cart loader +
-region-dispatched memory map) is the next step.
+**Current state.** Stage 1 is done. `src/main.tac` exports
+`run : Int -> Int` taking the ROM length and returning `0` on success or
+`addr+1` on the first mismatched read. It allocates the GB working set in
+Tacit (VRAM, ERAM, WRAM, OAM, IO page, HRAM, IE, plus an `@i64-alloc`
+register file for MBC state) and implements region-dispatched `read8` /
+`write8` as a `rec` group; `write8` to 0x2000–0x3FFF updates the MBC1 ROM
+bank (5-bit mask, 0→1). The host (`host/src/main.rs`) loads
+`cpu_instrs/cpu_instrs.gb`, satisfies the single `rom_byte` import (raw byte
+at absolute file offset), and verifies all 4 banks of the 64 KB ROM via
+`read8` end-to-end. `cargo run` reports
+`run -> ok, all memory-map reads matched` in ~4 ms. Stage 2 (CPU correctness)
+is the next step — see `~/.claude/projects/-home-mike-github-tacboy/memory/project_stage_status.md`
+for the in-flight design decisions and where the work was paused.
 
 ## Reading the language and workflow contracts
 
@@ -62,6 +68,23 @@ in `tacit.toml` that reference the old hashes. Use
 the new ones. If the public-export hash changed, also regenerate host
 bindings with `tacit interface . --emit-library` and update the matching
 `tacit_p_<…>_e_<…>` symbol in `host/src/main.rs`.
+
+## Tacit is experimental — three-strikes rule
+
+Tacit-Lite is an actively evolving experimental language. The primer
+documents the intended surface, but the implementation has real gaps and
+parser quirks that aren't in the docs (the per-toolchain gotchas below are
+the ones found so far). If you try three reasonable variations of a
+language feature — different syntaxes, different placements, different
+type annotations, etc. — and none of them work, **stop and ask the user**.
+A persistent failure on something the primer implies should work is more
+likely a missing language feature than a mistake in your code. Surfacing it
+to the user lets them weigh implementing it in the language vs.
+working around it in tacboy, instead of you silently choosing a worse
+workaround. Examples of "ask, don't grind": effect annotations in a
+position the parser rejects, a primitive that the naming convention
+implies should exist but doesn't resolve, a record/closure shape the type
+checker keeps refusing.
 
 ## Tacit-Lite gotchas pinned to this toolchain (0.7.6)
 
