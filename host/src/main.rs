@@ -1,51 +1,45 @@
-use std::ffi::c_void;
 use std::ptr;
 
-#[repr(C)]
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-#[allow(dead_code)]
-enum TacitStatus {
-    Ok = 0,
-    BadArgument = 1,
-    MissingImport = 2,
-    HostError = 3,
+#[allow(non_camel_case_types, non_snake_case, dead_code)]
+mod tacit;
+use tacit::*;
+
+struct Host {
+    last_byte: Option<u8>,
 }
 
-#[repr(C)]
-struct TacitCallbacks {
-    _unused: u8,
-}
-
-#[repr(C)]
-struct TacitContext {
-    user: *mut c_void,
-    callbacks: *const TacitCallbacks,
-}
-
-extern "C" {
-    fn tacit_p_dcb61de373652ff9_e_0045aea4368f20c0(
-        ctx: *mut TacitContext,
-        arg0: i64,
-        out: *mut i64,
-    ) -> TacitStatus;
+impl TacboyCallbacks for Host {
+    fn present_byte(&mut self, byte: u8) -> Result<i64, Error> {
+        println!("present_byte = {byte}");
+        self.last_byte = Some(byte);
+        Ok(byte as i64)
+    }
 }
 
 fn main() {
-    let callbacks = TacitCallbacks { _unused: 0 };
-    let mut ctx = TacitContext {
-        user: ptr::null_mut(),
-        callbacks: &callbacks as *const _,
+    // Program: LD A,5 ; LD B,3 ; ADD A,B ; HALT
+    let mut rom: [u8; 6] = [0x3E, 0x05, 0x06, 0x03, 0x80, 0x76];
+
+    let rom_view = tacit_u8vec {
+        data: rom.as_mut_ptr(),
+        len: rom.len() as u64,
     };
+
+    let mut ctx = tacit_p_289cab837cd1e363_context {
+        user: ptr::null_mut(),
+        callbacks: ptr::null(),
+    };
+    ctx.bind_callbacks(Host { last_byte: None });
 
     let mut out: i64 = -1;
     let status = unsafe {
-        tacit_p_dcb61de373652ff9_e_0045aea4368f20c0(&mut ctx, 0, &mut out)
+        tacit_p_289cab837cd1e363_e_50c5965a2240cdc0(&mut ctx, rom_view, &mut out)
     };
 
     match status {
-        TacitStatus::Ok => {
-            println!("run_demo(0) = {out}");
-            std::process::exit(if out == 8 { 0 } else { 1 });
+        tacit_status::TACIT_STATUS_OK => {
+            println!("run -> status_ok, exit {out}");
+            std::process::exit(0);
         }
         other => {
             eprintln!("tacit call failed: {other:?}");

@@ -19,10 +19,18 @@ fn main() {
 
     println!("cargo:rustc-link-search=native={}", lib_dir.display());
     println!("cargo:rustc-link-lib=static={}", lib_basename);
-    println!(
-        "cargo:rustc-env=TACIT_BINDINGS_PATH={}",
-        bindings_path.display()
-    );
+
+    let out_dir = PathBuf::from(std::env::var_os("OUT_DIR").expect("OUT_DIR not set"));
+    let staged = out_dir.join("tacit_host.rs");
+    let raw = fs::read_to_string(&bindings_path).expect("read generated bindings");
+    let stripped: String = raw
+        .lines()
+        .filter(|line| !line.trim_start().starts_with("#!["))
+        .collect::<Vec<_>>()
+        .join("\n");
+    fs::write(&staged, stripped).expect("write staged bindings");
+
+    println!("cargo:rustc-env=TACIT_BINDINGS_PATH={}", staged.display());
 }
 
 fn find_host_artifacts(derived: &Path) -> Option<(PathBuf, String, PathBuf)> {
