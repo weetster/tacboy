@@ -25,7 +25,7 @@ fn main() {
         len: rom.len() as u64,
     };
 
-    let mut ctx = tacit_p_289cab837cd1e363_context {
+    let mut ctx = tacit_p_7568eb874bcaf7d7_context {
         user: ptr::null_mut(),
         callbacks: ptr::null(),
     };
@@ -33,7 +33,7 @@ fn main() {
 
     let mut out: i64 = -1;
     let status = unsafe {
-        tacit_p_289cab837cd1e363_e_50c5965a2240cdc0(&mut ctx, rom_view, &mut out)
+        tacit_p_7568eb874bcaf7d7_e_98b8cbef6d923734(&mut ctx, rom_view, &mut out)
     };
 
     match status {
