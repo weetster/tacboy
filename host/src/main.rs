@@ -59,7 +59,7 @@ fn main() {
         max_cycles
     );
 
-    let mut ctx = tacit_p_a50d768444386463_context {
+    let mut ctx = tacit_p_230b5804ad38b777_context {
         user: ptr::null_mut(),
         callbacks: ptr::null(),
     };
@@ -70,7 +70,7 @@ fn main() {
 
     let mut out: i64 = -1;
     let status = unsafe {
-        tacit_p_a50d768444386463_e_fd504ff4eeb6ba49(&mut ctx, rom_len as i64, max_cycles, &mut out)
+        tacit_p_230b5804ad38b777_e_a55cae34fd625b23(&mut ctx, rom_len as i64, max_cycles, &mut out)
     };
 
     if status != tacit_status::TACIT_STATUS_OK {
