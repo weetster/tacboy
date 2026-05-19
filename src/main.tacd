@@ -1,15 +1,18 @@
 {
   "tacd_version": "1",
-  "targets_hash_blake3": "8ca964bc7533a1445927044e64d5729022872f220d96b988db7ae7b7863cbd66",
+  "targets_hash_blake3": "329a9b0e5bd14c5abad0757bd1bc77f8361ed1978211022e9ab7753e893aa467",
   "unit_alias": "Main",
   "definition_aliases": {
-    "ee754ecf2110de561174458affe419d1b97a437bfe51b2db414f9bb2b8cf73bc": "run"
+    "169dee7f4c8285c9f84c19eb0215f6c87b76d1867c6bdaec9c949409ea66971f": "run"
   },
   "import_aliases": {
-    "e2af4b1aff29f9c09d5a97fb913cf9555f36d5509954ea59b61e0a36a42e9a9f": "rom_byte"
+    "9b4904764a31d993f611ed7af2ad0c483c49d1a2d8082974b14417a748f9fb8a": "combine_hl",
+    "b623b06cbee162db0657c5baef7cf4f30c6653174e5741eb8f2518cece1cebc0": "write_serial",
+    "e2af4b1aff29f9c09d5a97fb913cf9555f36d5509954ea59b61e0a36a42e9a9f": "rom_byte",
+    "f2e7d56582adea2f78f61c192232d6d9daac58b8199d5ea0e4246ee9c3e3bfce": "sext8"
   },
   "export_aliases": {
-    "ee754ecf2110de561174458affe419d1b97a437bfe51b2db414f9bb2b8cf73bc": "run"
+    "169dee7f4c8285c9f84c19eb0215f6c87b76d1867c6bdaec9c949409ea66971f": "run"
   },
   "display": {}
 }

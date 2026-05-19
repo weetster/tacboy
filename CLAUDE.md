@@ -2,7 +2,7 @@
 
 tacboy is a Game Boy emulator written in Tacit-Lite, with a thin Rust host
 that bridges to SDL, mmap'd ROM, and stdio. The toolchain is pinned by
-`tacit-toolchain.toml` (currently 0.7.6).
+`tacit-toolchain.toml` (currently 0.7.7).
 
 ## Vision and current state
 
@@ -18,19 +18,25 @@ limits), SDL window/audio, stdout, input polling. Host imports are declared
 in Tacit as capability callbacks and satisfied by implementing the generated
 `TacboyCallbacks` trait in `host/src/main.rs`.
 
-**Current state.** Stage 1 is done. `src/main.tac` exports
-`run : Int -> Int` taking the ROM length and returning `0` on success or
-`addr+1` on the first mismatched read. It allocates the GB working set in
-Tacit (VRAM, ERAM, WRAM, OAM, IO page, HRAM, IE, plus an `@i64-alloc`
-register file for MBC state) and implements region-dispatched `read8` /
-`write8` as a `rec` group; `write8` to 0x2000–0x3FFF updates the MBC1 ROM
-bank (5-bit mask, 0→1). The host (`host/src/main.rs`) loads
-`cpu_instrs/cpu_instrs.gb`, satisfies the single `rom_byte` import (raw byte
-at absolute file offset), and verifies all 4 banks of the 64 KB ROM via
-`read8` end-to-end. `cargo run` reports
-`run -> ok, all memory-map reads matched` in ~4 ms. Stage 2 (CPU correctness)
-is the next step — see `~/.claude/projects/-home-mike-github-tacboy/memory/project_stage_status.md`
-for the in-flight design decisions and where the work was paused.
+**Current state.** Stage 2 skeleton landed. `src/main.tac` exports
+`run : Int -> Int -> Int / {Alloc, Div, IO, Mut}` taking (rom_len,
+max_cycles). It allocates the GB working set (VRAM, ERAM, WRAM, OAM, IO,
+HRAM, IE, an `@i64-alloc` MBC slot, and a 16-slot `@i64-alloc` register
+file laid out as `regs[0..7]=B,C,D,E,H,L,_,A`, `regs[8]=F`, `regs[9]=SP`,
+`regs[10]=PC`, `regs[11]=IME`, `regs[12]=HALTED`, `regs[13]` scratch for
+the last unknown opcode). `read8`/`write8` are a `rec` group with
+region-dispatched if/else chains; writes to 0xFF02 with the high bit set
+trigger the host `write_serial` callback with the SB byte and then clear
+SC. The CPU loop is an immediate `@loop` over a cycle counter that
+fetches PC, advances, dispatches on the opcode, and recognises NOP,
+HALT, JR, JP nn, and LD A,A — every other opcode stashes itself in
+`regs[13]` and exits with code 2. Return codes from `run`: 0=HALT,
+1=cycle cap, 2=unknown opcode. The host implements both `rom_byte` and
+`write_serial`, defaults to 5,000,000 cycles, and prints each serial
+byte to stdout as it arrives. Against blargg `cpu_instrs.gb` the
+skeleton currently runs ~handful of instructions before hitting an
+opcode it doesn't know — that's the expected hand-off point for the
+next session, which should expand the opcode table.
 
 ## Reading the language and workflow contracts
 
@@ -86,7 +92,7 @@ position the parser rejects, a primitive that the naming convention
 implies should exist but doesn't resolve, a record/closure shape the type
 checker keeps refusing.
 
-## Tacit-Lite gotchas pinned to this toolchain (0.7.6)
+## Tacit-Lite gotchas pinned to this toolchain (0.7.7)
 
 - **`tacit check` is stale after `canonicalize`.** It only re-checks bodies
   after `tacit lock` runs. Always sequence as `canonicalize` → `lock` →

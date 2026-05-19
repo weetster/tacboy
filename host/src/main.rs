@@ -1,5 +1,6 @@
 use std::env;
 use std::fs;
+use std::io::{self, Write};
 use std::path::PathBuf;
 use std::ptr;
 
@@ -7,8 +8,11 @@ use std::ptr;
 mod tacit;
 use tacit::*;
 
+const DEFAULT_MAX_CYCLES: i64 = 5_000_000;
+
 struct Host {
     rom: Vec<u8>,
+    serial: Vec<u8>,
 }
 
 impl TacboyCallbacks for Host {
@@ -17,6 +21,15 @@ impl TacboyCallbacks for Host {
             return Err(Error::HostError(tacit_status::TACIT_STATUS_BAD_ARGUMENT));
         }
         Ok(self.rom[offset as usize])
+    }
+
+    fn write_serial(&mut self, byte: u8) -> Result<i64, Error> {
+        self.serial.push(byte);
+        let stdout = io::stdout();
+        let mut h = stdout.lock();
+        let _ = h.write_all(&[byte]);
+        let _ = h.flush();
+        Ok(byte as i64)
     }
 }
 
@@ -29,38 +42,58 @@ fn main() {
         .nth(1)
         .map(PathBuf::from)
         .unwrap_or_else(default_rom_path);
+    let max_cycles: i64 = env::args()
+        .nth(2)
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(DEFAULT_MAX_CYCLES);
 
     let rom = fs::read(&rom_path).unwrap_or_else(|err| {
         eprintln!("failed to read ROM {}: {err}", rom_path.display());
         std::process::exit(2);
     });
     let rom_len = rom.len();
-    println!("loaded {} ({} bytes)", rom_path.display(), rom_len);
+    eprintln!(
+        "loaded {} ({} bytes); max_cycles={}",
+        rom_path.display(),
+        rom_len,
+        max_cycles
+    );
 
-    let mut ctx = tacit_p_2863980d4a431adb_context {
+    let mut ctx = tacit_p_457c41fde496a52d_context {
         user: ptr::null_mut(),
         callbacks: ptr::null(),
     };
-    ctx.bind_callbacks(Host { rom });
+    ctx.bind_callbacks(Host {
+        rom,
+        serial: Vec::new(),
+    });
 
     let mut out: i64 = -1;
     let status = unsafe {
-        tacit_p_2863980d4a431adb_e_ee754ecf2110de56(&mut ctx, rom_len as i64, &mut out)
+        tacit_p_457c41fde496a52d_e_169dee7f4c8285c9(&mut ctx, rom_len as i64, max_cycles, &mut out)
     };
 
-    match status {
-        tacit_status::TACIT_STATUS_OK => {
-            if out == 0 {
-                println!("run -> ok, all memory-map reads matched");
-                std::process::exit(0);
-            } else {
-                eprintln!("run -> mismatch at address 0x{:04X} (return code {})", out - 1, out);
-                std::process::exit(1);
-            }
+    if status != tacit_status::TACIT_STATUS_OK {
+        eprintln!("tacit call failed: {status:?}");
+        std::process::exit(2);
+    }
+
+    match out {
+        0 => {
+            eprintln!("\nrun -> HALT");
+            std::process::exit(0);
+        }
+        1 => {
+            eprintln!("\nrun -> cycle cap reached ({max_cycles} cycles)");
+            std::process::exit(0);
+        }
+        2 => {
+            eprintln!("\nrun -> unknown opcode (diagnostic stashed in regs[13])");
+            std::process::exit(0);
         }
         other => {
-            eprintln!("tacit call failed: {other:?}");
-            std::process::exit(2);
+            eprintln!("\nrun -> unexpected return code {other}");
+            std::process::exit(1);
         }
     }
 }
