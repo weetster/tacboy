@@ -19,9 +19,17 @@ const DEFAULT_MAX_CYCLES: i64 = 5_000_000;
 struct Host {
     rom: Vec<u8>,
     serial: Vec<u8>,
+    frames_presented: u64,
+    last_frame_len: usize,
 }
 
 impl TacboyCallbacks for Host {
+    fn present_frame(&mut self, frame: &[u8]) -> Result<i64, Error> {
+        self.frames_presented = self.frames_presented.saturating_add(1);
+        self.last_frame_len = frame.len();
+        Ok(self.frames_presented as i64)
+    }
+
     fn rom_byte(&mut self, offset: i64) -> Result<u8, Error> {
         if offset < 0 || (offset as usize) >= self.rom.len() {
             return Err(Error::HostError(tacit_status::TACIT_STATUS_BAD_ARGUMENT));
@@ -72,6 +80,8 @@ fn main() {
     ctx.bind_callbacks(Host {
         rom,
         serial: Vec::new(),
+        frames_presented: 0,
+        last_frame_len: 0,
     });
 
     let mut out: i64 = -1;
