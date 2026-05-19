@@ -72,8 +72,9 @@ After any source edit, definition hashes change. Run `tacit lock` to refresh
 in `tacit.toml` that reference the old hashes. Use
 `tacit view src --as inspection --hashes` (or read `tacit.lock`) to look up
 the new ones. If the public-export hash changed, also regenerate host
-bindings with `tacit interface . --emit-library` and update the matching
-`tacit_p_<…>_e_<…>` symbol in `host/src/main.rs`.
+bindings with `tacit interface . --emit-library`. The Rust host should call
+stable names from its generated shim (`run`, `TacboyContext`) instead of
+hand-editing `tacit_p_<…>` symbols in `host/src/main.rs`.
 
 ## Tacit is experimental — three-strikes rule
 
@@ -111,4 +112,5 @@ checker keeps refusing.
 Before handing changes back: `tacit lock`, then `tacit check . --format
 json` (confirm `errors: []`), then `tacit test . --format json`. If the
 host export hash changed, also `tacit interface . --emit-library` and
-`cargo build` (and ideally `cargo run`) from `host/`.
+`cargo build` (and ideally `cargo run`) from `host/`; the host build
+regenerates the stable shim from `tacit.toml` and `tacit.lock`.

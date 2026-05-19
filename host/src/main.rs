@@ -6,7 +6,13 @@ use std::ptr;
 
 #[allow(non_camel_case_types, non_snake_case, dead_code)]
 mod tacit;
-use tacit::*;
+#[allow(dead_code)]
+mod shim {
+    include!(env!("TACIT_SHIM_PATH"));
+}
+
+use shim::{run, TacboyContext};
+use tacit::{tacit_status, Error, TacboyCallbacks};
 
 const DEFAULT_MAX_CYCLES: i64 = 5_000_000;
 
@@ -59,7 +65,7 @@ fn main() {
         max_cycles
     );
 
-    let mut ctx = tacit_p_adc5720e149e83ad_context {
+    let mut ctx = TacboyContext {
         user: ptr::null_mut(),
         callbacks: ptr::null(),
     };
@@ -69,9 +75,7 @@ fn main() {
     });
 
     let mut out: i64 = -1;
-    let status = unsafe {
-        tacit_p_adc5720e149e83ad_e_8eb195da8716a291(&mut ctx, rom_len as i64, max_cycles, &mut out)
-    };
+    let status = unsafe { run(&mut ctx, rom_len as i64, max_cycles, &mut out) };
 
     if status != tacit_status::TACIT_STATUS_OK {
         eprintln!("tacit call failed: {status:?}");
