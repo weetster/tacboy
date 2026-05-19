@@ -1,0 +1,1 @@
+(unit (imports) (exports (exp package "a7ede71dd2954958b75ee6aa98fd80bd57507d05522372559bb74c17bf9a7ba9")) (defs (def (sig (fn-ty (sym u8) (sym Int) (eff-set)) (eff-set)) (lam (let (app (app (sym u8-and) (var 0)) (int 31)) (let (app (sym u8-to-i64-zext) (var 0)) (if (app (app (sym eq) (var 0)) (int 0)) (int 1) (var 0))))))))

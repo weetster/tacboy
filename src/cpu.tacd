@@ -1,0 +1,21 @@
+{
+  "tacd_version": "1",
+  "targets_hash_blake3": "10ff8a1aa717b23c5a0ff46dfb733485ae2d92040ccb2ad9a04c4191d9374ecf",
+  "unit_alias": "Cpu",
+  "definition_aliases": {
+    "7e761ce0a318708eeabfa24ef3d15f919d29a3264bd7455d2f37071d56d1ea8a": "opcode_halt",
+    "a1e35b788e88b0d3e766ad417639a2c546af32d860a2ba34fd35e0ac2b6553a8": "run_code_unknown_opcode",
+    "af0ddf065975956763c316dd8d48bfc63efa95041650c94f3917f3453495c580": "run_code_halt",
+    "bd83b9cec4f651f8f4bb91d751c1e0e9cb6a4d49d8dd581287597a99d29708c3": "run_code_cycle_cap",
+    "d1d0865b02978c704152502049d28179f35a8aae10ad15341bcc4d4e96e074ab": "opcode_cb_prefix"
+  },
+  "import_aliases": {},
+  "export_aliases": {
+    "7e761ce0a318708eeabfa24ef3d15f919d29a3264bd7455d2f37071d56d1ea8a": "opcode_halt",
+    "a1e35b788e88b0d3e766ad417639a2c546af32d860a2ba34fd35e0ac2b6553a8": "run_code_unknown_opcode",
+    "af0ddf065975956763c316dd8d48bfc63efa95041650c94f3917f3453495c580": "run_code_halt",
+    "bd83b9cec4f651f8f4bb91d751c1e0e9cb6a4d49d8dd581287597a99d29708c3": "run_code_cycle_cap",
+    "d1d0865b02978c704152502049d28179f35a8aae10ad15341bcc4d4e96e074ab": "opcode_cb_prefix"
+  },
+  "display": {}
+}

@@ -1,0 +1,1 @@
+(unit (imports) (exports (exp package "4216e86f2fd246168bcd0aaa2824bb0ee02e6c3a62d81125511df692e855a037")) (defs (def (sig (fn-ty (sym Int) (sym Int) (eff-set)) (eff-set)) (lam (if (app (app (sym eq) (var 0)) (int 0)) (int 1024) (if (app (app (sym eq) (var 0)) (int 1)) (int 16) (if (app (app (sym eq) (var 0)) (int 2)) (int 64) (int 256))))))))

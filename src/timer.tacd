@@ -1,0 +1,13 @@
+{
+  "tacd_version": "1",
+  "targets_hash_blake3": "a6fdce0082a562cde4e5085be07dbd77cf40beb9ae893dcda21214d5abd4a26b",
+  "unit_alias": "Timer",
+  "definition_aliases": {
+    "4216e86f2fd246168bcd0aaa2824bb0ee02e6c3a62d81125511df692e855a037": "timer_period"
+  },
+  "import_aliases": {},
+  "export_aliases": {
+    "4216e86f2fd246168bcd0aaa2824bb0ee02e6c3a62d81125511df692e855a037": "timer_period"
+  },
+  "display": {}
+}

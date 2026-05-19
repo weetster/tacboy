@@ -1,0 +1,27 @@
+{
+  "tacd_version": "1",
+  "targets_hash_blake3": "9d0de99a182ad9155dbd502bc6a5b5a6db4d24140ce8caa8ca977942eeb11e88",
+  "unit_alias": "Machine",
+  "definition_aliases": {
+    "15993486954c07db239b072ed017c907826d45628d59f7e1d3e571908be407db": "run_machine"
+  },
+  "import_aliases": {
+    "237457190eff50263ba54d19c6bddaf3c4e3bfe0955710fb8cadc2a129e37318": "interrupt_index_from_pending",
+    "4216e86f2fd246168bcd0aaa2824bb0ee02e6c3a62d81125511df692e855a037": "timer_period",
+    "6f5972411523fd032e7aaa32c07b5e99377b5c26a2ff317c0c1842c5974a9c84": "cb_hl_extra_cycles",
+    "8682928785418e66e73498552b359291bc09279322fb8a600731aa644ddda7f2": "cart_romx_addr",
+    "9195ea80415d6989b62164bc5ee286ff2f94c403a5ff54d22347bf11bb6f81a6": "bit_mask",
+    "9b4904764a31d993f611ed7af2ad0c483c49d1a2d8082974b14417a748f9fb8a": "combine_hl",
+    "a5bcc34f1b29be03483c423bc0720587e0cf0441d64c5ceea23f7cde721c2291": "serial_should_transfer",
+    "a7ede71dd2954958b75ee6aa98fd80bd57507d05522372559bb74c17bf9a7ba9": "mbc1_lower_rom_bank",
+    "b42ca8b00c71fd70b9e5f6d6780b555d2e47c7ed308329781290d9bf05cf633a": "present_frame",
+    "b623b06cbee162db0657c5baef7cf4f30c6653174e5741eb8f2518cece1cebc0": "write_serial",
+    "dc42ad852e300b4eb133f456670c7a141a161e8658907be505b2ff287bec81ee": "interrupt_vector",
+    "e2af4b1aff29f9c09d5a97fb913cf9555f36d5509954ea59b61e0a36a42e9a9f": "rom_byte",
+    "f2e7d56582adea2f78f61c192232d6d9daac58b8199d5ea0e4246ee9c3e3bfce": "sext8"
+  },
+  "export_aliases": {
+    "15993486954c07db239b072ed017c907826d45628d59f7e1d3e571908be407db": "run_machine"
+  },
+  "display": {}
+}

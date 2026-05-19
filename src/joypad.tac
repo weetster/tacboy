@@ -1,0 +1,1 @@
+(unit (imports) (exports (exp package "41f921b4c2ee44088e8d6c881ada2057efd42e3ac6a42f41f00f8458b9588a10") (exp package "6dffe47cf668bd00a5033aa14c60a53989b73c3fbc347f90a41f3a9a45fc6967")) (defs (def (sig (sym Int) (eff-set)) (int 65280)) (def (sig (sym u8) (eff-set)) (int 255))))

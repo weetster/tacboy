@@ -1,0 +1,15 @@
+{
+  "tacd_version": "1",
+  "targets_hash_blake3": "f986d4600a2b93e7ee1495b9662c442b63c3e36dd1edea43fb761d0416c7b997",
+  "unit_alias": "Interrupts",
+  "definition_aliases": {
+    "237457190eff50263ba54d19c6bddaf3c4e3bfe0955710fb8cadc2a129e37318": "interrupt_index_from_pending",
+    "dc42ad852e300b4eb133f456670c7a141a161e8658907be505b2ff287bec81ee": "interrupt_vector"
+  },
+  "import_aliases": {},
+  "export_aliases": {
+    "237457190eff50263ba54d19c6bddaf3c4e3bfe0955710fb8cadc2a129e37318": "interrupt_index_from_pending",
+    "dc42ad852e300b4eb133f456670c7a141a161e8658907be505b2ff287bec81ee": "interrupt_vector"
+  },
+  "display": {}
+}

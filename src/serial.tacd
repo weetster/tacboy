@@ -1,0 +1,13 @@
+{
+  "tacd_version": "1",
+  "targets_hash_blake3": "dd3a0bf29c38901bf2eaffac91261af2a4cf4e0a2bac65ba51039ba9c9bebb79",
+  "unit_alias": "Serial",
+  "definition_aliases": {
+    "a5bcc34f1b29be03483c423bc0720587e0cf0441d64c5ceea23f7cde721c2291": "serial_should_transfer"
+  },
+  "import_aliases": {},
+  "export_aliases": {
+    "a5bcc34f1b29be03483c423bc0720587e0cf0441d64c5ceea23f7cde721c2291": "serial_should_transfer"
+  },
+  "display": {}
+}

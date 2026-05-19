@@ -1,0 +1,13 @@
+{
+  "tacd_version": "1",
+  "targets_hash_blake3": "a230ba372c889664bf0e2a4d906167a92d596796e235ce4b7d931c0b1674c812",
+  "unit_alias": "Mbc",
+  "definition_aliases": {
+    "a7ede71dd2954958b75ee6aa98fd80bd57507d05522372559bb74c17bf9a7ba9": "mbc1_lower_rom_bank"
+  },
+  "import_aliases": {},
+  "export_aliases": {
+    "a7ede71dd2954958b75ee6aa98fd80bd57507d05522372559bb74c17bf9a7ba9": "mbc1_lower_rom_bank"
+  },
+  "display": {}
+}

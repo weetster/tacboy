@@ -1,0 +1,15 @@
+{
+  "tacd_version": "1",
+  "targets_hash_blake3": "dda51e9f48762b717e2f756de14467a507ac3df2ff8eb2ab75bf797340cd1460",
+  "unit_alias": "Joypad",
+  "definition_aliases": {
+    "41f921b4c2ee44088e8d6c881ada2057efd42e3ac6a42f41f00f8458b9588a10": "joypad_addr",
+    "6dffe47cf668bd00a5033aa14c60a53989b73c3fbc347f90a41f3a9a45fc6967": "joypad_default"
+  },
+  "import_aliases": {},
+  "export_aliases": {
+    "41f921b4c2ee44088e8d6c881ada2057efd42e3ac6a42f41f00f8458b9588a10": "joypad_addr",
+    "6dffe47cf668bd00a5033aa14c60a53989b73c3fbc347f90a41f3a9a45fc6967": "joypad_default"
+  },
+  "display": {}
+}

@@ -1,0 +1,17 @@
+{
+  "tacd_version": "1",
+  "targets_hash_blake3": "29fcb36173f42f37a69cc95dac42a445c84d9452be78e616c23b1e7490bb9474",
+  "unit_alias": "Ppu",
+  "definition_aliases": {
+    "2dce3a5d31022175212ad787e69c5e240152eb2bbc7fbbf9c3ed052aa422252b": "ppu_framebuffer_len",
+    "312a4de034a9d619ceb4965cb976fcde5de86bf7f32518606c319bb3d4b312d3": "ppu_mode_for_dot",
+    "aba058d7db8a1457a1cbf262922f0870704a7ae5f84372d71cbd778b2af1db50": "ppu_scanline_offset"
+  },
+  "import_aliases": {},
+  "export_aliases": {
+    "2dce3a5d31022175212ad787e69c5e240152eb2bbc7fbbf9c3ed052aa422252b": "ppu_framebuffer_len",
+    "312a4de034a9d619ceb4965cb976fcde5de86bf7f32518606c319bb3d4b312d3": "ppu_mode_for_dot",
+    "aba058d7db8a1457a1cbf262922f0870704a7ae5f84372d71cbd778b2af1db50": "ppu_scanline_offset"
+  },
+  "display": {}
+}

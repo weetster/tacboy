@@ -1,0 +1,21 @@
+{
+  "tacd_version": "1",
+  "targets_hash_blake3": "806b707798365b423655527952facbf65b0478a06eee18b5c881625b2597d01a",
+  "unit_alias": "Cart",
+  "definition_aliases": {
+    "0f42d2c874839d8baf8ff1dd0794b244b71718881f448d26a5b6e623ed51f4db": "cart_ram_size_addr",
+    "72d354200b5e545702227c744a8c202877910219930a5c44a2a6cfba98541044": "cart_rom_size_addr",
+    "8682928785418e66e73498552b359291bc09279322fb8a600731aa644ddda7f2": "cart_romx_addr",
+    "a0e7ce4a5a371802258450a2ae04cb4ae1c4c61e79b59f8130197f1b8add9708": "cart_rom0_addr",
+    "e9e850924dd557fadc50efc298b703cf31272e8aeac10c3d385f9c792878027b": "cart_type_addr"
+  },
+  "import_aliases": {},
+  "export_aliases": {
+    "0f42d2c874839d8baf8ff1dd0794b244b71718881f448d26a5b6e623ed51f4db": "cart_ram_size_addr",
+    "72d354200b5e545702227c744a8c202877910219930a5c44a2a6cfba98541044": "cart_rom_size_addr",
+    "8682928785418e66e73498552b359291bc09279322fb8a600731aa644ddda7f2": "cart_romx_addr",
+    "a0e7ce4a5a371802258450a2ae04cb4ae1c4c61e79b59f8130197f1b8add9708": "cart_rom0_addr",
+    "e9e850924dd557fadc50efc298b703cf31272e8aeac10c3d385f9c792878027b": "cart_type_addr"
+  },
+  "display": {}
+}

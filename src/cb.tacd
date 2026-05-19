@@ -1,0 +1,15 @@
+{
+  "tacd_version": "1",
+  "targets_hash_blake3": "a36a5f58a501b8df2b54f9066d2c6658b24d258e344d201a54cd4b8f48f0d628",
+  "unit_alias": "Cb",
+  "definition_aliases": {
+    "6f5972411523fd032e7aaa32c07b5e99377b5c26a2ff317c0c1842c5974a9c84": "cb_hl_extra_cycles",
+    "9195ea80415d6989b62164bc5ee286ff2f94c403a5ff54d22347bf11bb6f81a6": "bit_mask"
+  },
+  "import_aliases": {},
+  "export_aliases": {
+    "6f5972411523fd032e7aaa32c07b5e99377b5c26a2ff317c0c1842c5974a9c84": "cb_hl_extra_cycles",
+    "9195ea80415d6989b62164bc5ee286ff2f94c403a5ff54d22347bf11bb6f81a6": "bit_mask"
+  },
+  "display": {}
+}
