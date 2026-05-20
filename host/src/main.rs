@@ -24,12 +24,18 @@ struct Host {
     frames_presented: u64,
     last_frame_len: usize,
     frontend: Box<dyn Frontend>,
+    /// When set (via `TACBOY_DUMP`), each frame's raw bytes are written here,
+    /// so the final file holds the last frame the PPU produced.
+    dump_path: Option<PathBuf>,
 }
 
 impl TacboyCallbacks for Host {
     fn present_frame(&mut self, frame: &[u8]) -> Result<i64, Error> {
         self.frames_presented = self.frames_presented.saturating_add(1);
         self.last_frame_len = frame.len();
+        if let Some(path) = &self.dump_path {
+            let _ = fs::write(path, frame);
+        }
         self.frontend.present(frame);
         Ok(self.frames_presented as i64)
     }
@@ -55,13 +61,16 @@ fn default_rom_path() -> PathBuf {
     PathBuf::from("/home/mike/github/gb-test-roms/cpu_instrs/cpu_instrs.gb")
 }
 
-/// Parsed command line: positional args plus the `--frontend`/`--size` flags.
+/// Parsed command line: positionals plus the `--frontend`/`--size`/`--color`
+/// flags.
 struct Args {
     rom_path: PathBuf,
     max_cycles: i64,
     frontend: String,
     /// Terminal size override `(cols, rows)` for the tui frontend.
     size: Option<(u16, u16)>,
+    /// Color-mode override (`256`/`truecolor`) for the tui frontend.
+    color: Option<String>,
 }
 
 /// Parse a cycle budget. Accepts a plain integer, or one of `inf`,
@@ -83,6 +92,7 @@ fn parse_args() -> Args {
     let mut positionals: Vec<String> = Vec::new();
     let mut frontend = String::from("headless");
     let mut size: Option<(u16, u16)> = None;
+    let mut color: Option<String> = None;
     let mut args = env::args().skip(1);
     while let Some(arg) = args.next() {
         match arg.as_str() {
@@ -91,6 +101,12 @@ fn parse_args() -> Args {
                     eprintln!("--frontend requires a value (headless, tui)");
                     std::process::exit(2);
                 });
+            }
+            "--color" => {
+                color = Some(args.next().unwrap_or_else(|| {
+                    eprintln!("--color requires a value (256, truecolor)");
+                    std::process::exit(2);
+                }));
             }
             "--size" => {
                 let raw = args.next().unwrap_or_else(|| {
@@ -121,6 +137,7 @@ fn parse_args() -> Args {
             .unwrap_or(DEFAULT_MAX_CYCLES),
         frontend,
         size,
+        color,
     }
 }
 
@@ -147,7 +164,8 @@ fn main() {
 
     // Build the frontend after diagnostics: the terminal frontend clears the
     // screen on construction, so the messages above should print first.
-    let frontend = frontend::make(&args.frontend, args.size).unwrap_or_else(|err| {
+    let frontend = frontend::make(&args.frontend, args.size, args.color.as_deref())
+        .unwrap_or_else(|err| {
         eprintln!("{err}");
         std::process::exit(2);
     });
@@ -162,6 +180,7 @@ fn main() {
         frames_presented: 0,
         last_frame_len: 0,
         frontend,
+        dump_path: env::var_os("TACBOY_DUMP").map(PathBuf::from),
     });
 
     let mut out: i64 = -1;

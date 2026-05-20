@@ -21,16 +21,50 @@ pub const FB_LEN: usize = FB_WIDTH * FB_HEIGHT;
 /// One Game Boy frame at the DMG refresh rate (59.7275 Hz).
 const FRAME_DURATION: Duration = Duration::from_nanos(16_742_706);
 
-/// Classic DMG green palette, index 0 (lightest) .. 3 (darkest).
-const PALETTE: [(u8, u8, u8); 4] = [
-    (155, 188, 15),
-    (139, 172, 15),
-    (48, 98, 48),
-    (15, 56, 15),
+/// The four DMG shades, lightest (0) to darkest (3), given as both a 24-bit
+/// RGB triple and the nearest xterm-256 palette index. The Game Boy only
+/// has these four colors, so 256-color is visually indistinguishable from
+/// truecolor here — but far more widely supported over SSH and in tmux.
+const PALETTE: [((u8, u8, u8), u8); 4] = [
+    ((155, 188, 15), 148),
+    ((139, 172, 15), 142),
+    ((48, 98, 48), 65),
+    ((15, 56, 15), 22),
 ];
 
-fn color(idx: u8) -> (u8, u8, u8) {
-    PALETTE[(idx & 3) as usize]
+/// How to encode color in the escape stream.
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub enum ColorMode {
+    /// `\x1b[38;5;Nm` — xterm-256 indexed. The compatible default.
+    Indexed256,
+    /// `\x1b[38;2;r;g;bm` — 24-bit truecolor. Exact, but many terminals and
+    /// multiplexers silently drop it, which makes every half-block render in
+    /// default colors (uniform horizontal stripes).
+    Truecolor,
+}
+
+impl ColorMode {
+    fn parse(s: &str) -> Option<Self> {
+        match s {
+            "256" | "indexed" => Some(ColorMode::Indexed256),
+            "truecolor" | "24bit" | "rgb" => Some(ColorMode::Truecolor),
+            _ => None,
+        }
+    }
+
+    /// Emit a foreground (`base` 38) or background (`base` 48) color escape
+    /// for DMG `shade` (0..=3) into `buf`.
+    fn write_escape(self, buf: &mut String, base: u8, shade: u8) {
+        let ((r, g, b), idx) = PALETTE[(shade & 3) as usize];
+        match self {
+            ColorMode::Indexed256 => {
+                let _ = write!(buf, "\x1b[{base};5;{idx}m");
+            }
+            ColorMode::Truecolor => {
+                let _ = write!(buf, "\x1b[{base};2;{r};{g};{b}m");
+            }
+        }
+    }
 }
 
 /// A display target for finished frames. Restoration of any terminal/window
@@ -43,11 +77,23 @@ pub trait Frontend {
 }
 
 /// Selectable by name, so `main` can map a `--frontend` flag to a value.
-/// `size` is an optional `(cols, rows)` override for the terminal frontend.
-pub fn make(name: &str, size: Option<(u16, u16)>) -> Result<Box<dyn Frontend>, String> {
+/// `size` overrides terminal-size detection; `color` overrides the color
+/// mode (defaulting to the compatible 256-color encoding).
+pub fn make(
+    name: &str,
+    size: Option<(u16, u16)>,
+    color: Option<&str>,
+) -> Result<Box<dyn Frontend>, String> {
     match name {
         "headless" | "none" => Ok(Box::new(HeadlessFrontend)),
-        "tui" | "terminal" => Ok(Box::new(TerminalFrontend::new(size))),
+        "tui" | "terminal" => {
+            let color = match color {
+                None => ColorMode::Indexed256,
+                Some(s) => ColorMode::parse(s)
+                    .ok_or_else(|| format!("unknown --color '{s}' (expected: 256, truecolor)"))?,
+            };
+            Ok(Box::new(TerminalFrontend::new(size, color)))
+        }
         "sdl" => Err("sdl frontend not yet implemented; use --frontend tui".into()),
         other => Err(format!("unknown frontend '{other}' (expected: headless, tui)")),
     }
@@ -77,12 +123,13 @@ pub struct TerminalFrontend {
     /// Scaled output size in pixels; `out_h` is always even (half-blocks).
     out_w: usize,
     out_h: usize,
+    color: ColorMode,
     /// Deadline for the next present, advanced by one frame each time.
     next_frame: Option<Instant>,
 }
 
 impl TerminalFrontend {
-    pub fn new(size: Option<(u16, u16)>) -> Self {
+    pub fn new(size: Option<(u16, u16)>, color: ColorMode) -> Self {
         let (cols, rows) = size.or_else(detect_terminal_size).unwrap_or((80, 24));
         let (out_w, out_h) = fit(cols as usize, rows as usize);
 
@@ -97,6 +144,7 @@ impl TerminalFrontend {
             buf: String::new(),
             out_w,
             out_h,
+            color,
             next_frame: None,
         }
     }
@@ -120,7 +168,7 @@ impl Frontend for TerminalFrontend {
         if frame.len() < FB_LEN {
             return;
         }
-        let (out_w, out_h) = (self.out_w, self.out_h);
+        let (out_w, out_h, color) = (self.out_w, self.out_h, self.color);
         let buf = &mut self.buf;
         buf.clear();
         buf.push_str("\x1b[H"); // cursor home; overdraw the previous frame
@@ -129,17 +177,17 @@ impl Frontend for TerminalFrontend {
         for cell_row in 0..cell_rows {
             // A fresh `\x1b[0m` at each row end resets the active colors, so
             // the change tracking must restart per row.
-            let mut last_fg: Option<(u8, u8, u8)> = None;
-            let mut last_bg: Option<(u8, u8, u8)> = None;
+            let mut last_fg: Option<u8> = None;
+            let mut last_bg: Option<u8> = None;
             for ox in 0..out_w {
                 let fg = sample(frame, ox, cell_row * 2, out_w, out_h);
                 let bg = sample(frame, ox, cell_row * 2 + 1, out_w, out_h);
                 if last_fg != Some(fg) {
-                    let _ = write!(buf, "\x1b[38;2;{};{};{}m", fg.0, fg.1, fg.2);
+                    color.write_escape(buf, 38, fg);
                     last_fg = Some(fg);
                 }
                 if last_bg != Some(bg) {
-                    let _ = write!(buf, "\x1b[48;2;{};{};{}m", bg.0, bg.1, bg.2);
+                    color.write_escape(buf, 48, bg);
                     last_bg = Some(bg);
                 }
                 buf.push('\u{2580}'); // ▀ upper half block
@@ -210,11 +258,12 @@ fn install_signal_handlers() {
     }
 }
 
-/// Sample the source frame at scaled output coordinates (nearest pixel).
-fn sample(frame: &[u8], ox: usize, oy: usize, out_w: usize, out_h: usize) -> (u8, u8, u8) {
+/// Sample the source frame at scaled output coordinates (nearest pixel),
+/// returning the DMG shade index 0..=3.
+fn sample(frame: &[u8], ox: usize, oy: usize, out_w: usize, out_h: usize) -> u8 {
     let sx = ox * FB_WIDTH / out_w;
     let sy = oy * FB_HEIGHT / out_h;
-    color(frame[sy * FB_WIDTH + sx])
+    frame[sy * FB_WIDTH + sx] & 3
 }
 
 /// Largest nearest-neighbour output size (pixels) that fits a terminal of
