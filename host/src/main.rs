@@ -55,6 +55,26 @@ impl TacboyCallbacks for Host {
         let _ = h.flush();
         Ok(byte as i64)
     }
+
+    fn poll_joypad(&mut self, selector: i64) -> Result<i64, Error> {
+        let state = self.frontend.joypad_state();
+        let mut result: u8 = 0x0F;
+        if selector & 1 != 0 {
+            // D-pad row: bit0=Right, bit1=Left, bit2=Up, bit3=Down (active-low)
+            if (state >> 0) & 1 != 0 { result &= !0x01; }
+            if (state >> 1) & 1 != 0 { result &= !0x02; }
+            if (state >> 2) & 1 != 0 { result &= !0x04; }
+            if (state >> 3) & 1 != 0 { result &= !0x08; }
+        }
+        if selector & 2 != 0 {
+            // Button row: bit4=A, bit5=B, bit6=Select, bit7=Start (active-low)
+            if (state >> 4) & 1 != 0 { result &= !0x01; }
+            if (state >> 5) & 1 != 0 { result &= !0x02; }
+            if (state >> 6) & 1 != 0 { result &= !0x04; }
+            if (state >> 7) & 1 != 0 { result &= !0x08; }
+        }
+        Ok(result as i64)
+    }
 }
 
 fn default_rom_path() -> PathBuf {

@@ -80,6 +80,12 @@ pub trait Frontend {
     /// Present one completed frame: `frame` is `FB_LEN` bytes, values 0..=3.
     /// Implementations must tolerate a short/long slice without panicking.
     fn present(&mut self, frame: &[u8]);
+
+    /// Return the current raw joypad byte. Bit layout (1=pressed):
+    /// bit0=Right, bit1=Left, bit2=Up, bit3=Down, bit4=A, bit5=B, bit6=Select, bit7=Start
+    fn joypad_state(&self) -> u8 {
+        0
+    }
 }
 
 /// Selectable by name, so `main` can map a `--frontend` flag to a value.
@@ -286,6 +292,9 @@ pub struct SdlFrontend {
     canvas: Canvas<Window>,
     event_pump: sdl2::EventPump,
     next_frame: Option<Instant>,
+    /// Bit-packed pressed-button state. Layout: bit0=Right, bit1=Left, bit2=Up,
+    /// bit3=Down, bit4=A(Z), bit5=B(X), bit6=Select(Backspace), bit7=Start(Return)
+    buttons: u8,
 }
 
 impl SdlFrontend {
@@ -317,6 +326,7 @@ impl SdlFrontend {
             canvas,
             event_pump,
             next_frame: None,
+            buttons: 0,
         })
     }
 
@@ -363,11 +373,42 @@ impl Frontend for SdlFrontend {
                     keycode: Some(Keycode::Escape),
                     ..
                 } => std::process::exit(0),
+                Event::KeyDown { keycode: Some(kc), repeat: false, .. } => {
+                    if let Some(bit) = keycode_to_bit(kc) {
+                        self.buttons |= 1 << bit;
+                    }
+                }
+                Event::KeyUp { keycode: Some(kc), .. } => {
+                    if let Some(bit) = keycode_to_bit(kc) {
+                        self.buttons &= !(1 << bit);
+                    }
+                }
                 _ => {}
             }
         }
 
         self.pace();
+    }
+
+    fn joypad_state(&self) -> u8 {
+        self.buttons
+    }
+}
+
+/// Map an SDL Keycode to a joypad bit index.
+/// bit0=Right, bit1=Left, bit2=Up, bit3=Down, bit4=A(Z), bit5=B(X),
+/// bit6=Select(Backspace), bit7=Start(Return)
+fn keycode_to_bit(kc: Keycode) -> Option<u8> {
+    match kc {
+        Keycode::Right => Some(0),
+        Keycode::Left => Some(1),
+        Keycode::Up => Some(2),
+        Keycode::Down => Some(3),
+        Keycode::Z => Some(4),
+        Keycode::X => Some(5),
+        Keycode::Backspace => Some(6),
+        Keycode::Return => Some(7),
+        _ => None,
     }
 }
 

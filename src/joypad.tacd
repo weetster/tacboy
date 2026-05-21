@@ -1,15 +1,20 @@
 {
   "tacd_version": "1",
-  "targets_hash_blake3": "dda51e9f48762b717e2f756de14467a507ac3df2ff8eb2ab75bf797340cd1460",
+  "targets_hash_blake3": "1b43cb613fd1a66d469f18ac7b386004ef53ae10961a6a3d4715b5ad9fcc0bc6",
   "unit_alias": "Joypad",
   "definition_aliases": {
     "41f921b4c2ee44088e8d6c881ada2057efd42e3ac6a42f41f00f8458b9588a10": "joypad_addr",
-    "6dffe47cf668bd00a5033aa14c60a53989b73c3fbc347f90a41f3a9a45fc6967": "joypad_default"
+    "6dffe47cf668bd00a5033aa14c60a53989b73c3fbc347f90a41f3a9a45fc6967": "joypad_default",
+    "cc7c1eac45f93ad0be2ca3db0a286de28c4662384be34a619525afe472f8b817": "joypad_read"
   },
-  "import_aliases": {},
+  "import_aliases": {
+    "9b4904764a31d993f611ed7af2ad0c483c49d1a2d8082974b14417a748f9fb8a": "combine_hl",
+    "fec46306e347730af9376784ebc3a8771edef866445417d41cbfef89d619d488": "poll_joypad"
+  },
   "export_aliases": {
     "41f921b4c2ee44088e8d6c881ada2057efd42e3ac6a42f41f00f8458b9588a10": "joypad_addr",
-    "6dffe47cf668bd00a5033aa14c60a53989b73c3fbc347f90a41f3a9a45fc6967": "joypad_default"
+    "6dffe47cf668bd00a5033aa14c60a53989b73c3fbc347f90a41f3a9a45fc6967": "joypad_default",
+    "cc7c1eac45f93ad0be2ca3db0a286de28c4662384be34a619525afe472f8b817": "joypad_read"
   },
   "display": {}
 }

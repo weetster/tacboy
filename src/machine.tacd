@@ -1,9 +1,9 @@
 {
   "tacd_version": "1",
-  "targets_hash_blake3": "603551a8687c2e4b01a23bce1d1283275e9d133091299a8fc140defd6c4cb153",
+  "targets_hash_blake3": "b45265e8b4e26ed90446fd2ffe6627df83016b8ef9a4086231954c71aea59d9f",
   "unit_alias": "Machine",
   "definition_aliases": {
-    "fa79d599afd86ad87608e6de56c328f5c5a20a94eac40a5a72980cc91e56bbe8": "run_machine"
+    "e230c6bd0b4a76d0eec44beab7ba5f3a5bf65af21851390b00f3efbb82058b43": "run_machine"
   },
   "import_aliases": {
     "237457190eff50263ba54d19c6bddaf3c4e3bfe0955710fb8cadc2a129e37318": "interrupt_index_from_pending",
@@ -16,12 +16,13 @@
     "a7ede71dd2954958b75ee6aa98fd80bd57507d05522372559bb74c17bf9a7ba9": "mbc1_lower_rom_bank",
     "b42ca8b00c71fd70b9e5f6d6780b555d2e47c7ed308329781290d9bf05cf633a": "present_frame",
     "b623b06cbee162db0657c5baef7cf4f30c6653174e5741eb8f2518cece1cebc0": "write_serial",
+    "cc7c1eac45f93ad0be2ca3db0a286de28c4662384be34a619525afe472f8b817": "joypad_read",
     "dc42ad852e300b4eb133f456670c7a141a161e8658907be505b2ff287bec81ee": "interrupt_vector",
     "e2af4b1aff29f9c09d5a97fb913cf9555f36d5509954ea59b61e0a36a42e9a9f": "rom_byte",
     "f2e7d56582adea2f78f61c192232d6d9daac58b8199d5ea0e4246ee9c3e3bfce": "sext8"
   },
   "export_aliases": {
-    "fa79d599afd86ad87608e6de56c328f5c5a20a94eac40a5a72980cc91e56bbe8": "run_machine"
+    "e230c6bd0b4a76d0eec44beab7ba5f3a5bf65af21851390b00f3efbb82058b43": "run_machine"
   },
   "display": {}
 }
