@@ -14,6 +14,12 @@ use std::os::raw::{c_int, c_void};
 use std::process::Command;
 use std::time::{Duration, Instant};
 
+use sdl2::event::Event;
+use sdl2::keyboard::Keycode;
+use sdl2::pixels::PixelFormatEnum;
+use sdl2::render::{Canvas, Texture, TextureCreator};
+use sdl2::video::{Window, WindowContext};
+
 pub const FB_WIDTH: usize = 160;
 pub const FB_HEIGHT: usize = 144;
 pub const FB_LEN: usize = FB_WIDTH * FB_HEIGHT;
@@ -77,8 +83,8 @@ pub trait Frontend {
 }
 
 /// Selectable by name, so `main` can map a `--frontend` flag to a value.
-/// `size` overrides terminal-size detection; `color` overrides the color
-/// mode (defaulting to the compatible 256-color encoding).
+/// `size` overrides terminal-size detection for `tui`, or sets the window
+/// pixel dimensions (WxH) for `sdl`; `color` is `tui`-only.
 pub fn make(
     name: &str,
     size: Option<(u16, u16)>,
@@ -94,8 +100,15 @@ pub fn make(
             };
             Ok(Box::new(TerminalFrontend::new(size, color)))
         }
-        "sdl" => Err("sdl frontend not yet implemented; use --frontend tui".into()),
-        other => Err(format!("unknown frontend '{other}' (expected: headless, tui)")),
+        "sdl" => {
+            let (win_w, win_h) = size
+                .map(|(w, h)| (w as u32, h as u32))
+                .unwrap_or((FB_WIDTH as u32 * 3, FB_HEIGHT as u32 * 3));
+            SdlFrontend::new(win_w, win_h).map(|f| Box::new(f) as Box<dyn Frontend>)
+        }
+        other => Err(format!(
+            "unknown frontend '{other}' (expected: headless, tui, sdl)"
+        )),
     }
 }
 
@@ -255,6 +268,106 @@ fn install_signal_handlers() {
     unsafe {
         signal(SIGINT, restore_on_signal);
         signal(SIGTERM, restore_on_signal);
+    }
+}
+
+/// Renders into an SDL2 window scaled up from the native 160×144 framebuffer.
+/// Default scale is 3× (480×432); pass `--size WxH` to override.
+/// Quit on window-close or Escape; paced to the DMG 59.7 Hz refresh rate.
+///
+/// Drop order matters: `texture` must be destroyed before `_texture_creator`,
+/// and both before `canvas` (which owns the SDL renderer). Rust drops struct
+/// fields in declaration order (top-to-bottom), so the fields are ordered
+/// accordingly.
+pub struct SdlFrontend {
+    _sdl: sdl2::Sdl,
+    texture: Texture<'static>,
+    _texture_creator: TextureCreator<WindowContext>,
+    canvas: Canvas<Window>,
+    event_pump: sdl2::EventPump,
+    next_frame: Option<Instant>,
+}
+
+impl SdlFrontend {
+    pub fn new(win_w: u32, win_h: u32) -> Result<Self, String> {
+        let sdl = sdl2::init().map_err(|e| format!("SDL init: {e}"))?;
+        let video = sdl.video().map_err(|e| format!("SDL video: {e}"))?;
+        let window = video
+            .window("tacboy", win_w, win_h)
+            .position_centered()
+            .build()
+            .map_err(|e| format!("SDL window: {e}"))?;
+        let canvas = window
+            .into_canvas()
+            .accelerated()
+            .build()
+            .map_err(|e| format!("SDL canvas: {e}"))?;
+        let event_pump = sdl.event_pump().map_err(|e| format!("SDL event pump: {e}"))?;
+        let texture_creator = canvas.texture_creator();
+        let texture = texture_creator
+            .create_texture_streaming(PixelFormatEnum::RGB24, FB_WIDTH as u32, FB_HEIGHT as u32)
+            .map_err(|e| format!("SDL texture: {e}"))?;
+        // SAFETY: texture_creator is stored in the same struct and is declared after
+        // texture, so it outlives it (Rust drops fields top-to-bottom).
+        let texture: Texture<'static> = unsafe { std::mem::transmute(texture) };
+        Ok(Self {
+            _sdl: sdl,
+            texture,
+            _texture_creator: texture_creator,
+            canvas,
+            event_pump,
+            next_frame: None,
+        })
+    }
+
+    fn pace(&mut self) {
+        let now = Instant::now();
+        let target = self.next_frame.unwrap_or(now);
+        if now < target {
+            std::thread::sleep(target - now);
+        }
+        let advanced = target + FRAME_DURATION;
+        self.next_frame = Some(advanced.max(Instant::now()));
+    }
+}
+
+impl Frontend for SdlFrontend {
+    fn present(&mut self, frame: &[u8]) {
+        if frame.len() < FB_LEN {
+            return;
+        }
+
+        let _ = self.texture.with_lock(None, |data, pitch| {
+            for row in 0..FB_HEIGHT {
+                for col in 0..FB_WIDTH {
+                    let shade = (frame[row * FB_WIDTH + col] & 3) as usize;
+                    let (r, g, b) = PALETTE[shade].0;
+                    let off = row * pitch + col * 3;
+                    data[off] = r;
+                    data[off + 1] = g;
+                    data[off + 2] = b;
+                }
+            }
+        });
+
+        self.canvas.clear();
+        // Disjoint field borrows: canvas (mut) and texture (shared) are separate fields.
+        let texture = &self.texture as *const Texture<'static>;
+        let _ = self.canvas.copy(unsafe { &*texture }, None, None);
+        self.canvas.present();
+
+        for event in self.event_pump.poll_iter() {
+            match event {
+                Event::Quit { .. }
+                | Event::KeyDown {
+                    keycode: Some(Keycode::Escape),
+                    ..
+                } => std::process::exit(0),
+                _ => {}
+            }
+        }
+
+        self.pace();
     }
 }
 

@@ -62,6 +62,26 @@ fn main() {
 
     println!("cargo:rustc-env=TACIT_BINDINGS_PATH={}", staged.display());
     println!("cargo:rustc-env=TACIT_SHIM_PATH={}", shim.display());
+
+    sdl2_link_search();
+}
+
+/// On macOS, pkg-config often can't find Homebrew's SDL2 without PKG_CONFIG_PATH
+/// being set. Emit a rustc-link-search for the first SDL2 lib dir we find.
+fn sdl2_link_search() {
+    if std::env::var_os("CARGO_CFG_TARGET_OS").as_deref() != Some(std::ffi::OsStr::new("macos")) {
+        return;
+    }
+    let candidates = [
+        "/usr/local/opt/sdl2/lib",    // Intel Homebrew
+        "/opt/homebrew/opt/sdl2/lib", // Apple Silicon Homebrew
+    ];
+    for dir in candidates {
+        if std::path::Path::new(dir).exists() {
+            println!("cargo:rustc-link-search=native={dir}");
+            return;
+        }
+    }
 }
 
 fn package_hash_from_lock(path: &Path) -> Option<String> {

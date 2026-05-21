@@ -98,7 +98,7 @@ fn parse_args() -> Args {
         match arg.as_str() {
             "--frontend" => {
                 frontend = args.next().unwrap_or_else(|| {
-                    eprintln!("--frontend requires a value (headless, tui)");
+                    eprintln!("--frontend requires a value (headless, tui, sdl)");
                     std::process::exit(2);
                 });
             }

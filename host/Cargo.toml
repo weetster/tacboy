@@ -6,3 +6,6 @@ edition = "2021"
 [[bin]]
 name = "tacboy-host"
 path = "src/main.rs"
+
+[dependencies]
+sdl2 = "0.37"
