@@ -26,9 +26,13 @@ struct Host {
     last_frame_len: usize,
     warned_rom_oob: bool,
     frontend: Box<dyn Frontend>,
-    /// When set (via `TACBOY_DUMP`), each frame's raw bytes are written here,
-    /// so the final file holds the last frame the PPU produced.
     dump_path: Option<PathBuf>,
+    sav_path: Option<PathBuf>,
+    sav_data: Vec<u8>,
+}
+
+fn has_battery_ram(cart_type: u8) -> bool {
+    matches!(cart_type, 0x03 | 0x06 | 0x09 | 0x0D | 0x0F | 0x10 | 0x13 | 0x1B | 0x1E | 0x22 | 0xFF)
 }
 
 impl TacboyCallbacks for Host {
@@ -64,6 +68,24 @@ impl TacboyCallbacks for Host {
         let _ = h.write_all(&[byte]);
         let _ = h.flush();
         Ok(byte as i64)
+    }
+
+    fn load_sram_byte(&mut self, offset: i64) -> Result<u8, Error> {
+        if offset >= 0 && (offset as usize) < self.sav_data.len() {
+            Ok(self.sav_data[offset as usize])
+        } else {
+            Ok(0)
+        }
+    }
+
+    fn save_eram(&mut self, data: &[u8]) -> Result<i64, Error> {
+        if let Some(path) = &self.sav_path {
+            match fs::write(path, data) {
+                Ok(()) => eprintln!("saved SRAM to {}", path.display()),
+                Err(e) => eprintln!("warning: failed to write save file {}: {e}", path.display()),
+            }
+        }
+        Ok(0)
     }
 
     fn poll_joypad(&mut self, selector: i64) -> Result<i64, Error> {
@@ -180,6 +202,21 @@ fn main() {
     });
     let cart_type = rom.get(0x147).copied().unwrap_or(0xFF);
     let rom_len = rom.len();
+    let sav_path = if has_battery_ram(cart_type) {
+        Some(args.rom_path.with_extension("sav"))
+    } else {
+        None
+    };
+    let sav_data = sav_path.as_ref()
+        .and_then(|p| fs::read(p).ok())
+        .unwrap_or_default();
+    if let Some(p) = &sav_path {
+        if sav_data.is_empty() {
+            eprintln!("battery save: no existing save at {}", p.display());
+        } else {
+            eprintln!("battery save: loaded {} bytes from {}", sav_data.len(), p.display());
+        }
+    }
     let cycles_label = if args.max_cycles == i64::MAX {
         "unlimited".to_string()
     } else {
@@ -219,6 +256,8 @@ fn main() {
         warned_rom_oob: false,
         frontend,
         dump_path: env::var_os("TACBOY_DUMP").map(PathBuf::from),
+        sav_path,
+        sav_data,
     });
 
     let mut out: i64 = -1;
