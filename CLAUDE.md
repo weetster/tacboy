@@ -2,7 +2,7 @@
 
 tacboy is a Game Boy emulator written in Tacit-Lite, with a thin Rust host
 that bridges to SDL, mmap'd ROM, and stdio. The toolchain is pinned by
-`tacit-toolchain.toml` (currently 0.7.7).
+`tacit-toolchain.toml` (currently 0.7.9).
 
 ## Vision and current state
 
@@ -21,13 +21,15 @@ in Tacit as capability callbacks and satisfied by implementing the generated
 **Current state.** Stage 2 skeleton landed. `src/main.tac` exports
 `run : Int -> Int -> Int / {Alloc, Div, IO, Mut}` taking (rom_len,
 max_cycles). It allocates the GB working set (VRAM, ERAM, WRAM, OAM, IO,
-HRAM, IE, an `@i64-alloc` MBC slot, and a 16-slot `@i64-alloc` register
+HRAM, IE, an `@i64-alloc` MBC slot, and a 32-slot `@i64-alloc` register
 file laid out as `regs[0..7]=B,C,D,E,H,L,_,A`, `regs[8]=F`, `regs[9]=SP`,
 `regs[10]=PC`, `regs[11]=IME`, `regs[12]=HALTED`, `regs[13]` scratch for
-the last unknown opcode). `read8`/`write8` are a `rec` group with
-region-dispatched if/else chains; writes to 0xFF02 with the high bit set
-trigger the host `write_serial` callback with the SB byte and then clear
-SC. The CPU loop is an immediate `@loop` over a cycle counter that
+the last unknown opcode). Bus dispatch lives in `src/bus.tac` as
+`bus_read8`/`bus_write8`, called from local machine wrappers with explicit
+ROM, joypad, serial, RAM, IO, HRAM, IE, MBC, register, PPU, and APU handles.
+Writes to 0xFF02 with the high bit set trigger the host `write_serial`
+callback with the SB byte and then clear SC. The CPU loop is an immediate
+`@loop` over a cycle counter that
 fetches PC, advances, dispatches on the opcode, and recognises NOP,
 HALT, JR, JP nn, and LD A,A — every other opcode stashes itself in
 `regs[13]` and exits with code 2. Return codes from `run`: 0=HALT,
@@ -93,7 +95,7 @@ position the parser rejects, a primitive that the naming convention
 implies should exist but doesn't resolve, a record/closure shape the type
 checker keeps refusing.
 
-## Tacit-Lite gotchas pinned to this toolchain (0.7.7)
+## Tacit-Lite gotchas pinned to this toolchain (0.7.9)
 
 - **`tacit check` is stale after `canonicalize`.** It only re-checks bodies
   after `tacit lock` runs. Always sequence as `canonicalize` → `lock` →

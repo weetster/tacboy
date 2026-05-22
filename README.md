@@ -66,7 +66,7 @@ docs/
 
 You need:
 
-- the Tacit toolchain pinned by [`tacit-toolchain.toml`](tacit-toolchain.toml) (currently `0.7.8`)
+- the Tacit toolchain pinned by [`tacit-toolchain.toml`](tacit-toolchain.toml) (currently `0.7.9`)
 - Rust/Cargo
 - SDL2 development libraries for the SDL frontend
 

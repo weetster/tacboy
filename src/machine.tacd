@@ -1,31 +1,29 @@
 {
   "tacd_version": "1",
-  "targets_hash_blake3": "16a5a88a80a477cab36235a4aa9db944d6ee459052401eca9ccbd69a7f8875f6",
+  "targets_hash_blake3": "e49db54d528d7b8987b92ad2ae26034c12103bd527e2e6abe6dd3289a4611a42",
   "unit_alias": "Machine",
   "definition_aliases": {
-    "e5c3c3ff1f266b54658587f537eb9ca0ce4e9fc632f0650429d39523cffe49be": "run_machine"
+    "f6750a8c04eff7a9b3cc6c0d0c82997778be90fd903d1c96f1038e04f0b7610e": "run_machine"
   },
   "import_aliases": {
     "1106a1473ff67f8ef52db78b1d39850eeee558df90dcabd33de7ef2a0801d317": "load_sram_byte",
-    "2164b3463c82f584a3d93aec9970f50d47a4ae67e6c1def54ea0ddd00dddbd16": "mbc3_lower_rom_bank",
+    "18b633e679873b7180f93c21c9310a2dc7fa5b7b170f981142b336fc4271cddf": "bus_read8",
     "237457190eff50263ba54d19c6bddaf3c4e3bfe0955710fb8cadc2a129e37318": "interrupt_index_from_pending",
     "4216e86f2fd246168bcd0aaa2824bb0ee02e6c3a62d81125511df692e855a037": "timer_period",
     "6f5972411523fd032e7aaa32c07b5e99377b5c26a2ff317c0c1842c5974a9c84": "cb_hl_extra_cycles",
     "7b2402a35dabb0e79cf850ceb14e931ac5187129ecc1ce7bca55da3fd4dadfc2": "save_eram",
-    "8682928785418e66e73498552b359291bc09279322fb8a600731aa644ddda7f2": "cart_romx_addr",
     "9195ea80415d6989b62164bc5ee286ff2f94c403a5ff54d22347bf11bb6f81a6": "bit_mask",
     "9b4904764a31d993f611ed7af2ad0c483c49d1a2d8082974b14417a748f9fb8a": "combine_hl",
-    "a5bcc34f1b29be03483c423bc0720587e0cf0441d64c5ceea23f7cde721c2291": "serial_should_transfer",
-    "a7ede71dd2954958b75ee6aa98fd80bd57507d05522372559bb74c17bf9a7ba9": "mbc1_lower_rom_bank",
     "b42ca8b00c71fd70b9e5f6d6780b555d2e47c7ed308329781290d9bf05cf633a": "present_frame",
     "b623b06cbee162db0657c5baef7cf4f30c6653174e5741eb8f2518cece1cebc0": "write_serial",
     "cc7c1eac45f93ad0be2ca3db0a286de28c4662384be34a619525afe472f8b817": "joypad_read",
+    "cf112777d09edec610e334dd150afc5363fa3884c8219996649c2f097da0c074": "bus_write8",
     "dc42ad852e300b4eb133f456670c7a141a161e8658907be505b2ff287bec81ee": "interrupt_vector",
     "e2af4b1aff29f9c09d5a97fb913cf9555f36d5509954ea59b61e0a36a42e9a9f": "rom_byte",
     "f2e7d56582adea2f78f61c192232d6d9daac58b8199d5ea0e4246ee9c3e3bfce": "sext8"
   },
   "export_aliases": {
-    "e5c3c3ff1f266b54658587f537eb9ca0ce4e9fc632f0650429d39523cffe49be": "run_machine"
+    "f6750a8c04eff7a9b3cc6c0d0c82997778be90fd903d1c96f1038e04f0b7610e": "run_machine"
   },
   "display": {}
 }
