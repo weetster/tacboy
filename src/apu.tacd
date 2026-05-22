@@ -1,0 +1,38 @@
+{
+  "tacd_version": "1",
+  "targets_hash_blake3": "c1c27b20abbb455259985cf76d7ee18fd0a51bba80766965922a19d1089cb605",
+  "unit_alias": "Apu",
+  "definition_aliases": {
+    "00ef445ab6a066cfe55a64f7eb1db52d592c706fef9aedd7fe738755dae9a76f": "apu_handle_dac_write",
+    "263821834f903b5bef51afd2843e452130b54b79d4cf2cc5b9af0c768ed22b47": "test_apu_register_masks",
+    "3a86fda89ee40d8154cd1d1c3c3039a7fe044b6737c62cf5533effbeda61009a": "apu_wave_offset",
+    "5e1cada5db9aac934d526a4a6c04432a3b5f0b844f63a51c0c4169c7c896cc5e": "apu_read8",
+    "683825fab32cd8c691cde24918226166cfd7c7f9e86e0c0ca3c9d68fe7b78537": "apu_write8",
+    "79df2bb24d734a9887c7db73d8afe8820571ed523172553bfca5157937b9f20b": "test_apu_wave_mapping",
+    "7c864d5a6f9c4ab86b3a6791a30a7d35fe2f56c82e62ecdfd8a650406e61e6b1": "apu_is_wave_addr",
+    "80d828edf9801875521e7dae32e6fbedae93f113a6a6c39c4734fede6d27e38f": "apu_clear_powered_state",
+    "84a1b8483b8c6f715921b0d91597acd539a2d81d8e51e6011b1a79613e0beb45": "test_apu_nr52_read_bits",
+    "8d5cf2377acffff2f175a48325d7a976f65ea0963e44588874b0f6238021ce9f": "apu_read_masked_value",
+    "9d2fbceec02b1f5f132e2de2376bef0d0243249428720ab1324dedb1cbc5bd36": "apu_is_unused_nr_addr",
+    "ad04742f2d61e8390eb16445c138ce1f203dee785a78a032bdfee8aaf89cabaa": "apu_nr52_read_value",
+    "b924a481467405b0fe3ed2b5b95b8792cd3f6e0a6706db65563165d572c910dc": "apu_handle_trigger_write",
+    "c6863a311832ce5dd2d82c7ff51e9683768cb676b30c5459d24cde4d5c3d9fbe": "apu_powered",
+    "c70bf16b396d658a483073f05f2a27366e4940517a1d65a3d95838c09e218fdb": "apu_channel_dac_on"
+  },
+  "import_aliases": {},
+  "export_aliases": {
+    "00ef445ab6a066cfe55a64f7eb1db52d592c706fef9aedd7fe738755dae9a76f": "apu_handle_dac_write",
+    "3a86fda89ee40d8154cd1d1c3c3039a7fe044b6737c62cf5533effbeda61009a": "apu_wave_offset",
+    "5e1cada5db9aac934d526a4a6c04432a3b5f0b844f63a51c0c4169c7c896cc5e": "apu_read8",
+    "683825fab32cd8c691cde24918226166cfd7c7f9e86e0c0ca3c9d68fe7b78537": "apu_write8",
+    "7c864d5a6f9c4ab86b3a6791a30a7d35fe2f56c82e62ecdfd8a650406e61e6b1": "apu_is_wave_addr",
+    "80d828edf9801875521e7dae32e6fbedae93f113a6a6c39c4734fede6d27e38f": "apu_clear_powered_state",
+    "8d5cf2377acffff2f175a48325d7a976f65ea0963e44588874b0f6238021ce9f": "apu_read_masked_value",
+    "9d2fbceec02b1f5f132e2de2376bef0d0243249428720ab1324dedb1cbc5bd36": "apu_is_unused_nr_addr",
+    "ad04742f2d61e8390eb16445c138ce1f203dee785a78a032bdfee8aaf89cabaa": "apu_nr52_read_value",
+    "b924a481467405b0fe3ed2b5b95b8792cd3f6e0a6706db65563165d572c910dc": "apu_handle_trigger_write",
+    "c6863a311832ce5dd2d82c7ff51e9683768cb676b30c5459d24cde4d5c3d9fbe": "apu_powered",
+    "c70bf16b396d658a483073f05f2a27366e4940517a1d65a3d95838c09e218fdb": "apu_channel_dac_on"
+  },
+  "display": {}
+}

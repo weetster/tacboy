@@ -1,21 +1,23 @@
 {
   "tacd_version": "1",
-  "targets_hash_blake3": "aeeaca565bc5b99794a5094d6f3d653ac58e296a15354fa79ef855290a85fafe",
+  "targets_hash_blake3": "a28106e8446ae984612d36a544a244942de9a0439ca5be7811617b30c341b869",
   "unit_alias": "Bus",
   "definition_aliases": {
-    "18b633e679873b7180f93c21c9310a2dc7fa5b7b170f981142b336fc4271cddf": "bus_read8",
-    "cf112777d09edec610e334dd150afc5363fa3884c8219996649c2f097da0c074": "bus_write8"
+    "406d73df0c51e844339921fe7956f2d926cae006293ca3f4cf01c4be89b5b7da": "bus_write8",
+    "81392946729d49cda59c15dc2b8a97be22c6bf807579b5d2e0740db3d799d5fe": "bus_read8"
   },
   "import_aliases": {
     "2164b3463c82f584a3d93aec9970f50d47a4ae67e6c1def54ea0ddd00dddbd16": "mbc3_lower_rom_bank",
+    "5e1cada5db9aac934d526a4a6c04432a3b5f0b844f63a51c0c4169c7c896cc5e": "apu_read8",
+    "683825fab32cd8c691cde24918226166cfd7c7f9e86e0c0ca3c9d68fe7b78537": "apu_write8",
     "8682928785418e66e73498552b359291bc09279322fb8a600731aa644ddda7f2": "cart_romx_addr",
     "9b4904764a31d993f611ed7af2ad0c483c49d1a2d8082974b14417a748f9fb8a": "combine_hl",
     "a5bcc34f1b29be03483c423bc0720587e0cf0441d64c5ceea23f7cde721c2291": "serial_should_transfer",
     "a7ede71dd2954958b75ee6aa98fd80bd57507d05522372559bb74c17bf9a7ba9": "mbc1_lower_rom_bank"
   },
   "export_aliases": {
-    "18b633e679873b7180f93c21c9310a2dc7fa5b7b170f981142b336fc4271cddf": "bus_read8",
-    "cf112777d09edec610e334dd150afc5363fa3884c8219996649c2f097da0c074": "bus_write8"
+    "406d73df0c51e844339921fe7956f2d926cae006293ca3f4cf01c4be89b5b7da": "bus_write8",
+    "81392946729d49cda59c15dc2b8a97be22c6bf807579b5d2e0740db3d799d5fe": "bus_read8"
   },
   "display": {}
 }
