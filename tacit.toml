@@ -11,11 +11,11 @@ collections = { hash = "blake3:618e92f562755167288bd23bc82a16a02035d39e2c2852e3f
 io = { hash = "blake3:624b3278c9e6fa5421589e8dcfa7b11e595a8566ade2d6a124ce6a10c0c6825d", source = { registry = "builtin", name = "tacit.io" } }
 
 [exports]
-run = "blake3:319b7f05caf3e44a59f20f73dca646e9d4e9e142a7cf659eb4545e166d9cc68a"
+run = "blake3:87ce94253d143752e8cad819122e83692db9c1b36d53c2b8c494ad6f7203efe1"
 
 [[tests]]
 name = "apu-register-masks"
-target = "blake3:263821834f903b5bef51afd2843e452130b54b79d4cf2cc5b9af0c768ed22b47"
+target = "blake3:332f32bab3b1e4b997d97735f4c8697bed8d219dd5f2d61618c4a557e140d3fa"
 
 [[tests]]
 name = "apu-wave-mapping"
@@ -23,7 +23,7 @@ target = "blake3:79df2bb24d734a9887c7db73d8afe8820571ed523172553bfca5157937b9f20
 
 [[tests]]
 name = "apu-nr52-read-bits"
-target = "blake3:84a1b8483b8c6f715921b0d91597acd539a2d81d8e51e6011b1a79613e0beb45"
+target = "blake3:dd8eb24a52a8fc5a597e29b3499e71cd7419f2820a1725183ea8f3175e443818"
 
 [[tests]]
 name = "apu-frame-sequencer"
@@ -32,3 +32,19 @@ target = "blake3:d688a56858e7872fb9b354ee050ee37044299205c41f3dc432be69030446142
 [[tests]]
 name = "apu-sample-accumulator"
 target = "blake3:2dbe3200d0e85b426dfe25be5baee67f650d5f05d7ae968a10e9b6fdd5e73301"
+
+[[tests]]
+name = "apu-ch1-duty"
+target = "blake3:84c9c78d7e066d846268c561949933f98c76fd561109b918a43bc3c6c9b818ee"
+
+[[tests]]
+name = "apu-ch1-length"
+target = "blake3:b9d5d95176a95eb78504ffe5a123121c1372b382cafce2d12701b1fdf0ae0004"
+
+[[tests]]
+name = "apu-ch1-envelope"
+target = "blake3:7ec76b1ff6fbdd684f920027446a683b4e7f5061c12d09afff5c9176cbcaf6c5"
+
+[[tests]]
+name = "apu-ch1-sweep"
+target = "blake3:0a0af63234c9ed347c646f9377c3def4cf76dd5a7cd31a3200e658db4a1ebf4c"
