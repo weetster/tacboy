@@ -192,7 +192,7 @@ fn main() {
         cycles_label,
         args.frontend,
     );
-    if !matches!(cart_type, 0x00 | 0x01 | 0x02 | 0x03) {
+    if !matches!(cart_type, 0x00 | 0x01 | 0x02 | 0x03 | 0x11 | 0x12 | 0x13) {
         eprintln!(
             "warning: cartridge type {cart_type:#04x} is not fully supported; mapper reads may be inaccurate"
         );

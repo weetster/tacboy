@@ -1,12 +1,14 @@
 {
   "tacd_version": "1",
-  "targets_hash_blake3": "a230ba372c889664bf0e2a4d906167a92d596796e235ce4b7d931c0b1674c812",
+  "targets_hash_blake3": "19f007c342066874c22f62e7d4958d0d544dd12e737ffef8c6db70ba0c56b4f0",
   "unit_alias": "Mbc",
   "definition_aliases": {
+    "2164b3463c82f584a3d93aec9970f50d47a4ae67e6c1def54ea0ddd00dddbd16": "mbc3_lower_rom_bank",
     "a7ede71dd2954958b75ee6aa98fd80bd57507d05522372559bb74c17bf9a7ba9": "mbc1_lower_rom_bank"
   },
   "import_aliases": {},
   "export_aliases": {
+    "2164b3463c82f584a3d93aec9970f50d47a4ae67e6c1def54ea0ddd00dddbd16": "mbc3_lower_rom_bank",
     "a7ede71dd2954958b75ee6aa98fd80bd57507d05522372559bb74c17bf9a7ba9": "mbc1_lower_rom_bank"
   },
   "display": {}
