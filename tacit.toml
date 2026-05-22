@@ -11,4 +11,4 @@ collections = { hash = "blake3:618e92f562755167288bd23bc82a16a02035d39e2c2852e3f
 io = { hash = "blake3:624b3278c9e6fa5421589e8dcfa7b11e595a8566ade2d6a124ce6a10c0c6825d", source = { registry = "builtin", name = "tacit.io" } }
 
 [exports]
-run = "blake3:92ad638a87f9d37dae3d0ad991a4db5933df85d3899cf82712e86887f01425fa"
+run = "blake3:ee4148b8d52b8d295040d4139c540da6296042919d2d6894f34037324ce00815"

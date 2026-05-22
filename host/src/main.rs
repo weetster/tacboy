@@ -20,9 +20,11 @@ const DEFAULT_MAX_CYCLES: i64 = 5_000_000;
 
 struct Host {
     rom: Vec<u8>,
+    cart_type: u8,
     serial: Vec<u8>,
     frames_presented: u64,
     last_frame_len: usize,
+    warned_rom_oob: bool,
     frontend: Box<dyn Frontend>,
     /// When set (via `TACBOY_DUMP`), each frame's raw bytes are written here,
     /// so the final file holds the last frame the PPU produced.
@@ -42,7 +44,15 @@ impl TacboyCallbacks for Host {
 
     fn rom_byte(&mut self, offset: i64) -> Result<u8, Error> {
         if offset < 0 || (offset as usize) >= self.rom.len() {
-            return Err(Error::HostError(tacit_status::TACIT_STATUS_BAD_ARGUMENT));
+            if !self.warned_rom_oob {
+                self.warned_rom_oob = true;
+                eprintln!(
+                    "warning: ROM read out of range at {offset:#x} (len={:#x}, cart_type={:#04x}); returning 0xFF",
+                    self.rom.len(),
+                    self.cart_type,
+                );
+            }
+            return Ok(0xFF);
         }
         Ok(self.rom[offset as usize])
     }
@@ -168,6 +178,7 @@ fn main() {
         eprintln!("failed to read ROM {}: {err}", args.rom_path.display());
         std::process::exit(2);
     });
+    let cart_type = rom.get(0x147).copied().unwrap_or(0xFF);
     let rom_len = rom.len();
     let cycles_label = if args.max_cycles == i64::MAX {
         "unlimited".to_string()
@@ -181,6 +192,11 @@ fn main() {
         cycles_label,
         args.frontend,
     );
+    if !matches!(cart_type, 0x00 | 0x01 | 0x02 | 0x03) {
+        eprintln!(
+            "warning: cartridge type {cart_type:#04x} is not fully supported; mapper reads may be inaccurate"
+        );
+    }
 
     // Build the frontend after diagnostics: the terminal frontend clears the
     // screen on construction, so the messages above should print first.
@@ -196,9 +212,11 @@ fn main() {
     };
     ctx.bind_callbacks(Host {
         rom,
+        cart_type,
         serial: Vec::new(),
         frames_presented: 0,
         last_frame_len: 0,
+        warned_rom_oob: false,
         frontend,
         dump_path: env::var_os("TACBOY_DUMP").map(PathBuf::from),
     });

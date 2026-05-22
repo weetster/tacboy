@@ -17,8 +17,8 @@ use std::time::{Duration, Instant};
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::PixelFormatEnum;
-use sdl2::render::{Canvas, Texture, TextureCreator};
-use sdl2::video::{Window, WindowContext};
+use sdl2::render::Canvas;
+use sdl2::video::Window;
 
 pub const FB_WIDTH: usize = 160;
 pub const FB_HEIGHT: usize = 144;
@@ -280,15 +280,8 @@ fn install_signal_handlers() {
 /// Renders into an SDL2 window scaled up from the native 160×144 framebuffer.
 /// Default scale is 3× (480×432); pass `--size WxH` to override.
 /// Quit on window-close or Escape; paced to the DMG 59.7 Hz refresh rate.
-///
-/// Drop order matters: `texture` must be destroyed before `_texture_creator`,
-/// and both before `canvas` (which owns the SDL renderer). Rust drops struct
-/// fields in declaration order (top-to-bottom), so the fields are ordered
-/// accordingly.
 pub struct SdlFrontend {
     _sdl: sdl2::Sdl,
-    texture: Texture<'static>,
-    _texture_creator: TextureCreator<WindowContext>,
     canvas: Canvas<Window>,
     event_pump: sdl2::EventPump,
     next_frame: Option<Instant>,
@@ -312,17 +305,8 @@ impl SdlFrontend {
             .build()
             .map_err(|e| format!("SDL canvas: {e}"))?;
         let event_pump = sdl.event_pump().map_err(|e| format!("SDL event pump: {e}"))?;
-        let texture_creator = canvas.texture_creator();
-        let texture = texture_creator
-            .create_texture_streaming(PixelFormatEnum::RGB24, FB_WIDTH as u32, FB_HEIGHT as u32)
-            .map_err(|e| format!("SDL texture: {e}"))?;
-        // SAFETY: texture_creator is stored in the same struct and is declared after
-        // texture, so it outlives it (Rust drops fields top-to-bottom).
-        let texture: Texture<'static> = unsafe { std::mem::transmute(texture) };
         Ok(Self {
             _sdl: sdl,
-            texture,
-            _texture_creator: texture_creator,
             canvas,
             event_pump,
             next_frame: None,
@@ -347,7 +331,19 @@ impl Frontend for SdlFrontend {
             return;
         }
 
-        let _ = self.texture.with_lock(None, |data, pitch| {
+        // Keep the SDL texture scoped to the present call instead of storing a
+        // self-referential texture/creator pair with an invented lifetime.
+        let texture_creator = self.canvas.texture_creator();
+        let mut texture = match texture_creator.create_texture_streaming(
+            PixelFormatEnum::RGB24,
+            FB_WIDTH as u32,
+            FB_HEIGHT as u32,
+        ) {
+            Ok(texture) => texture,
+            Err(_) => return,
+        };
+
+        let _ = texture.with_lock(None, |data, pitch| {
             for row in 0..FB_HEIGHT {
                 for col in 0..FB_WIDTH {
                     let shade = (frame[row * FB_WIDTH + col] & 3) as usize;
@@ -361,9 +357,7 @@ impl Frontend for SdlFrontend {
         });
 
         self.canvas.clear();
-        // Disjoint field borrows: canvas (mut) and texture (shared) are separate fields.
-        let texture = &self.texture as *const Texture<'static>;
-        let _ = self.canvas.copy(unsafe { &*texture }, None, None);
+        let _ = self.canvas.copy(&texture, None, None);
         self.canvas.present();
 
         for event in self.event_pump.poll_iter() {
