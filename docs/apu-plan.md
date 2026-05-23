@@ -33,7 +33,7 @@ reverted, and `tacit check . --format json` reports `errors: []`.
 
 ## Stage 2 - Split Machine Responsibilities
 
-Status: complete on Tacit 0.7.9. Bus helpers now live in `bus.tac`, take
+Status: complete on Tacit 0.7.10. Bus helpers now live in `bus.tac`, take
 explicit state and callback parameters, and pass host-interface generation.
 
 Objective: reduce `machine.tac` enough that APU state can be added without

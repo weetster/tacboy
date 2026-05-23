@@ -1,14 +1,14 @@
 format = "tacit-toolchain-pin-v1"
 
 [toolchain]
-version = "0.7.9"
-release_hash = "blake3:be842864441e3d217dadecbbda37fccd9972bb97a13756eb4a60cb1cfc4fb681"
+version = "0.7.10"
+release_hash = "blake3:3484c2e48cd7f43058c28c9018be4015c6f72d7c877b3ad9a15871bdd09fe799"
 
 [primer]
 id = "tacit-lite"
-version = "0.7.9"
-toolchain_version = "0.7.9"
-hash = "blake3:f5b9ca37f90f886b62af37ad0b42328c55c799ceb60aa13fb829854d30964ed0"
+version = "0.7.10"
+toolchain_version = "0.7.10"
+hash = "blake3:2e155998d2a9c77ac1f8364fbac5dc1a951ac8c344b14782370d938bc30f04c0"
 
 [stdlib]
 "tacit.core" = "blake3:e30eabced26cc345212d71b7f3503af58c0c9b14ff7a54e8c17a60137287380d"

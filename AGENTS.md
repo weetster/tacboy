@@ -6,6 +6,10 @@ checks.
 
 ## Ticket workflow
 
+Use the `gh` CLI for GitHub interactions whenever possible. When reading
+issues, commenting, closing tickets, or otherwise working with GitHub from
+this repository, prefer `gh` over direct API calls or the web UI.
+
 When the user asks to handle a GitHub issue or ticket, treat that as an
 end-to-end workflow unless they explicitly narrow the scope:
 

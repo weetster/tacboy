@@ -2,7 +2,7 @@
 
 tacboy is a Game Boy emulator written in Tacit-Lite, with a thin Rust host
 that bridges to SDL, mmap'd ROM, and stdio. The toolchain is pinned by
-`tacit-toolchain.toml` (currently 0.7.9).
+`tacit-toolchain.toml` (currently 0.7.10).
 
 ## Vision and current state
 
@@ -18,7 +18,7 @@ limits), SDL window/audio, stdout, input polling. Host imports are declared
 in Tacit as capability callbacks and satisfied by implementing the generated
 `TacboyCallbacks` trait in `host/src/main.rs`.
 
-**Current state.** Stage 2 skeleton landed. `src/main.tac` exports
+**Current state.** `src/main.tac` exports
 `run : Int -> Int -> Int / {Alloc, Div, IO, Mut}` taking (rom_len,
 max_cycles). It allocates the GB working set (VRAM, ERAM, WRAM, OAM, IO,
 HRAM, IE, an `@i64-alloc` MBC slot, and a 32-slot `@i64-alloc` register
@@ -28,17 +28,14 @@ the last unknown opcode). Bus dispatch lives in `src/bus.tac` as
 `bus_read8`/`bus_write8`, called from local machine wrappers with explicit
 ROM, joypad, serial, RAM, IO, HRAM, IE, MBC, register, PPU, and APU handles.
 Writes to 0xFF02 with the high bit set trigger the host `write_serial`
-callback with the SB byte and then clear SC. The CPU loop is an immediate
-`@loop` over a cycle counter that
-fetches PC, advances, dispatches on the opcode, and recognises NOP,
-HALT, JR, JP nn, and LD A,A — every other opcode stashes itself in
-`regs[13]` and exits with code 2. Return codes from `run`: 0=HALT,
-1=cycle cap, 2=unknown opcode. The host implements both `rom_byte` and
-`write_serial`, defaults to 5,000,000 cycles, and prints each serial
-byte to stdout as it arrives. Against blargg `cpu_instrs.gb` the
-skeleton currently runs ~handful of instructions before hitting an
-opcode it doesn't know — that's the expected hand-off point for the
-next session, which should expand the opcode table.
+callback with the SB byte and then clear SC. The machine now includes a
+substantial CPU core, interrupt dispatch, timer plumbing, joypad reads,
+PPU framebuffer generation, and APU register/timing state. The host
+implements ROM reads, serial output, SRAM load/save, joypad polling, and
+frame presentation through `headless`, `tui`, and `sdl` frontends. Return
+codes from `run` remain 0=HALT, 1=cycle cap, 2=unknown opcode, but the
+codebase is no longer a minimal opcode skeleton: ALU/flag logic, CB-prefix
+handling, framebuffer presentation, and focused APU tests are all present.
 
 ## Reading the language and workflow contracts
 
@@ -95,17 +92,18 @@ position the parser rejects, a primitive that the naming convention
 implies should exist but doesn't resolve, a record/closure shape the type
 checker keeps refusing.
 
-## Tacit-Lite gotchas pinned to this toolchain (0.7.9)
+## Tacit-Lite gotchas pinned to this toolchain (0.7.10)
 
 - **`tacit check` is stale after `canonicalize`.** It only re-checks bodies
   after `tacit lock` runs. Always sequence as `canonicalize` → `lock` →
   `check`, or you can ship a "green" build that contains real type errors.
-- **Typed-vector capture in callbacks.** An *immediate* `@loop` callback
-  (lambda literally written as the second arg to `@loop`) may access
-  `u8vec` / `Buf` / `I64Vec` handles from the surrounding scope. Indirect
-  closures, `@for-each`, `@map`, `@fold`, etc. may not. If you need handle
-  access in a non-immediate callback, fall back to a `rec` helper (and add
-  `Div` to the effect set).
+- **Typed-vector handles work in direct-call helpers, not general closures.**
+  `u8vec` and other typed-vector handles may be threaded through direct-call
+  helpers as down-only, call-local parameters. They still should not be
+  captured by first-class closures, stored in records, or passed through
+  callback-heavy combinators like `@map`/`@fold`/`@for-each`. If handle-using
+  code needs decomposition, prefer a `rec` helper with explicit handle
+  parameters.
 - **`@loop` adds `Div`** to the enclosing function's effect set per primer
   §3.
 
