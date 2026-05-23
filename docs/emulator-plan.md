@@ -28,35 +28,57 @@ visual output. This collapses the critical path to CPU + memory map + serial.
 This keeps ROM out of Tacit (it can be 32 KB–8 MB depending on cartridge)
 while every cycle of simulation logic stays in Tacit.
 
-## Source tree
+## Source tree (as-built)
 
 ```
 tacboy/
   src/
-    cart.tac         cartridge header parse + MBC-type detection
-    mbc.tac          MBC1/MBC3/MBC5 bank-switch state
-    mem.tac          region dispatch: read8 / write8 / (helpers for read16)
-    regs.tac         register file layout + flag (F) helpers
-    cpu.tac          fetch/decode/execute for one instruction; returns cycles
-    cb.tac           the CB-prefixed opcode table (bit/rotate/shift)
-    interrupts.tac   IF/IE handling + interrupt vector dispatch
-    timer.tac        DIV / TIMA / TMA / TAC
-    serial.tac       FF01/FF02 — bytes out via host callback
-    ppu.tac          LCD modes, scanline counter, VBlank, framebuffer write
-    joypad.tac       FF00 button state
-    machine.tac      top-level state record + per-cycle @loop
+    apu.tac          APU register state, frame sequencer, sample generation
+    bus.tac          region dispatch — read8 / write8 (fills mem.tac's planned role)
+    cart.tac         cartridge header offset constants
+    cb.tac           CB-prefix support (bit_mask, cb_hl_extra_cycles)
+    cpu.tac          ALU helpers (alu_add/sub/cp/and/or/xor/inc/dec/add_hl/
+                     add_sp_e/daa/cpl/rlca/rrca/rla/rra) + run/opcode constants
+    interrupts.tac   IF/IE pending→vector dispatch helpers
+    joypad.tac       FF00 button state + host poll
+    machine.tac      run_machine — working-set allocation, outer cycle @loop,
+                     opcode dispatch, IRQ dispatch, bus closures (B0/B1) and
+                     bus-coupled helpers (push16/pop16/fetch_imm8/16, HL-indirect
+                     reg I/O, CB execute) kept as rec siblings
     main.tac         exports `run` (the only host entry point)
+    mbc.tac          MBC1/MBC3 bank-switch decoders
+    ppu.tac          ppu_step — single def whose internal rec group runs
+                     update_stat / render_bg / render_sprites / sprite_row /
+                     advance / step over (regs, vram, eram, oam, io, fb, wbg)
+    regs.tac         register-file slot indices + reg_bc/de/hl, set_bc/de/hl,
+                     flag_z/n/h/c, set_flags helpers
+    serial.tac       FF01/FF02 transfer trigger predicate
+    timer.tac        TAC period table
   host/
     src/main.rs      SDL window, ROM mmap, serial→stdout, input
     Cargo.toml, build.rs
-  tests/             rom-driven harness (calls run, captures serial)
   docs/
 ```
 
-One open question: **whether Tacit packages support multiple unit files in a
-single `[package]`.** Workflow doc implies yes (the `[exports]` table can
-reference any unit), but it's unverified. If it doesn't, we start with one
-`main.tac` and split when the language gets there. Confirm in stage 1.
+The 12-unit modular tree from the original plan is now realized as 13 units
+(no `mem.tac` — `bus.tac` plays that role — and no `helpers.tac` —
+`regs.tac` re-exports the four scalar helpers `hi_byte`/`lo_byte`/
+`combine_hl`/`sext8`). ADR 0098 (toolchain 0.7.9+) makes typed-vector
+handles legal as down-only call-local parameters of direct-call helpers,
+which is how `regs.tac`, `cpu.tac`, and `ppu.tac` accept the working-set
+handles owned by `run_machine`.
+
+**Why bus-coupled helpers stay in `machine.tac`.** `push16`, `pop16`,
+`fetch_imm8`, `fetch_imm16`, reg-indirect read/write (HL), and CB execute
+all need to call `bus_read8`/`bus_write8`. Those imports take ~16 handle
+parameters; lifting these helpers across unit boundaries would force every
+one of them to carry the full bus parameter list. Keeping them as rec
+siblings of `B0`/`B1` (the local bus closures that capture the working set)
+is the readable choice — the rec block's role is now exactly that
+bus-coupled core, with everything else lifted out.
+
+Tacit packages support multiple unit files in a single `[package]`; this is
+exercised throughout the tree.
 
 ## Stages
 
@@ -139,9 +161,13 @@ reference any unit), but it's unverified. If it doesn't, we start with one
 3. **MBC + region dispatch through Tacit on every memory access.** A
    `match` on the high nibble per access. Stage 1 tells us whether the
    per-access cost is acceptable.
-4. **Multi-unit packages.** If Tacit doesn't support multiple `.tac` files
-   per package today, the tree above collapses to one large `main.tac`
-   until it does. The logical division is still useful as documentation.
+4. **Multi-unit packages.** Resolved: Tacit packages support multiple
+   `.tac` files, and the as-built tree above realizes that. Risk #4 (the
+   tree collapsing back to one large unit) did materialize during stages
+   3–4 when `machine.tac` absorbed all the per-cycle logic into one
+   `rec` block, and was undone by the tacboy #2 decomposition once ADR
+   0098 (toolchain 0.7.9+) made typed-vector handle parameters legal on
+   direct-call helpers.
 
 ## Commitment
 

@@ -1,14 +1,21 @@
 {
   "tacd_version": "1",
-  "targets_hash_blake3": "29fcb36173f42f37a69cc95dac42a445c84d9452be78e616c23b1e7490bb9474",
+  "targets_hash_blake3": "4de8ee5d157b917de25a66d26b2b2ee15318c88a8a2fee5101a4f21e7195fe08",
   "unit_alias": "Ppu",
   "definition_aliases": {
+    "1c5cde04144d4c87bfb7d21d466b9b79bf20d92b41e9d027bbf784d72276e748": "ppu_step",
     "2dce3a5d31022175212ad787e69c5e240152eb2bbc7fbbf9c3ed052aa422252b": "ppu_framebuffer_len",
     "312a4de034a9d619ceb4965cb976fcde5de86bf7f32518606c319bb3d4b312d3": "ppu_mode_for_dot",
     "aba058d7db8a1457a1cbf262922f0870704a7ae5f84372d71cbd778b2af1db50": "ppu_scanline_offset"
   },
-  "import_aliases": {},
+  "import_aliases": {
+    "7b2402a35dabb0e79cf850ceb14e931ac5187129ecc1ce7bca55da3fd4dadfc2": "save_eram",
+    "9195ea80415d6989b62164bc5ee286ff2f94c403a5ff54d22347bf11bb6f81a6": "bit_mask",
+    "9b4904764a31d993f611ed7af2ad0c483c49d1a2d8082974b14417a748f9fb8a": "combine_hl",
+    "b42ca8b00c71fd70b9e5f6d6780b555d2e47c7ed308329781290d9bf05cf633a": "present_frame"
+  },
   "export_aliases": {
+    "1c5cde04144d4c87bfb7d21d466b9b79bf20d92b41e9d027bbf784d72276e748": "ppu_step",
     "2dce3a5d31022175212ad787e69c5e240152eb2bbc7fbbf9c3ed052aa422252b": "ppu_framebuffer_len",
     "312a4de034a9d619ceb4965cb976fcde5de86bf7f32518606c319bb3d4b312d3": "ppu_mode_for_dot",
     "aba058d7db8a1457a1cbf262922f0870704a7ae5f84372d71cbd778b2af1db50": "ppu_scanline_offset"
