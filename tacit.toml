@@ -11,7 +11,7 @@ collections = { hash = "blake3:618e92f562755167288bd23bc82a16a02035d39e2c2852e3f
 io = { hash = "blake3:624b3278c9e6fa5421589e8dcfa7b11e595a8566ade2d6a124ce6a10c0c6825d", source = { registry = "builtin", name = "tacit.io" } }
 
 [exports]
-run = "blake3:45c3e53058e9b2ab3ec8631973c88d031bac9dc37a21371279b95d4e2679782b"
+run = "blake3:4c05063d3f2868937f8678e3c2645a29a7dd9c82c9571bb4fa727c57be5efc30"
 
 [[tests]]
 name = "apu-register-masks"
@@ -60,3 +60,11 @@ target = "blake3:16053daa9af391ede46878b16ff931c78ee5278c9a6d7b2871ca0a0b3ab1d2b
 [[tests]]
 name = "apu-ch3-amplitude"
 target = "blake3:5909f9040a550ab5f00e243619537c9d3f0afbce6f82c1fcbbd89221a52517ec"
+
+[[tests]]
+name = "apu-ch4-divisor"
+target = "blake3:41eeb390d359fbb759fbcb77a2d81065dee9a381f698742f0ee91cb7fcc4ca7f"
+
+[[tests]]
+name = "apu-ch4-lfsr"
+target = "blake3:9f6201d959ef4849f35c83570f045485179d3cf9398ce1e4d759a83aa92fb38b"

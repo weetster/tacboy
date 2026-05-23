@@ -94,8 +94,9 @@ Validation:
 
 ## Stage 5 - Implement Channels Incrementally
 
-Objective: produce correct per-channel sample amplitudes in Tacit before
-full stereo mixing.
+Status: complete on Tacit 0.7.10. All four channels produce per-channel
+amplitudes in Tacit; APU i64 state grew from 24 to 29 slots to host CH4
+length/envelope/freq-timer/LFSR. Mixing remains in Stage 6.
 
 - Channel 1: square wave with duty, frequency timer, length, envelope, and
   sweep.

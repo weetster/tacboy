@@ -4,6 +4,12 @@ Follow [CLAUDE.md](CLAUDE.md) for Tacboy-specific project guidance,
 Tacit source editing rules, host binding workflow, gotchas, and hand-off
 checks.
 
+For targeted syntax refreshes, prefer selective primer commands before
+reading the full primer: `tacit primer --search <term>`,
+`tacit primer --list-sections`, then `tacit primer --section <id>`.
+Run `tacit primer` when you need the full Tacit-Lite language primer that
+matches this toolchain.
+
 ## Ticket workflow
 
 Use the `gh` CLI for GitHub interactions whenever possible. When reading

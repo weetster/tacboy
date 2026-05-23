@@ -39,9 +39,12 @@ handling, framebuffer presentation, and focused APU tests are all present.
 
 ## Reading the language and workflow contracts
 
-- Run `tacit primer` to print the Tacit-Lite language primer that matches
-  this toolchain. Read it before writing or editing source. Do not copy
-  primer prose from another repository or another toolchain version.
+- For targeted syntax refreshes, prefer selective primer commands before
+  reading the full primer: `tacit primer --search <term>`,
+  `tacit primer --list-sections`, then `tacit primer --section <id>`.
+- Run `tacit primer` when you need the full Tacit-Lite language primer that
+  matches this toolchain. Do not copy primer prose from another repository
+  or another toolchain version.
 - The agent workflow companion is installed at
   `share/tacit/workflow/agent-workflow.md` in the toolchain prefix
   (`/usr/local/share/tacit/workflow/agent-workflow.md` on this machine).
@@ -55,13 +58,14 @@ authoring view (`.taca`), which is a different surface syntax. The two do
 not line up token for token, and `.tac` hashes change with every edit. Edit
 via the round-trip loop instead:
 
-1. Render existing source as authoring view to a scratch path outside the
-   project, e.g.
-   `tacit render src/main.tac --as authoring -o /tmp/tacboy2.taca`.
+1. Render existing source as authoring view into the project's `.scratch/`
+   directory, e.g.
+   `tacit render src/main.tac --as authoring -o .scratch/tacboy.taca`.
+   Create `.scratch/` if it does not exist; it is excluded by `.gitignore`.
 2. Edit the scratch `.taca` using the authoring-view syntax from the
    primer.
 3. Canonicalize back into the project:
-   `tacit canonicalize /tmp/tacboy2.taca -o src/main.tac --force`. That
+   `tacit canonicalize .scratch/tacboy.taca -o src/main.tac --force`. That
    rewrites both `src/main.tac` and `src/main.tacd`.
 4. Delete the scratch `.taca`. Do not check `.taca` files into this
    project.

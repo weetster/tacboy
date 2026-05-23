@@ -1,23 +1,23 @@
 {
   "tacd_version": "1",
-  "targets_hash_blake3": "c06263a23ead156467778dd761facfb6ca121b16fb92ab0b028a3c405bb943c1",
+  "targets_hash_blake3": "f9f099bd38622243a778305fb58aa11f12571a2877691fb2eeb20ea4344cd619",
   "unit_alias": "Bus",
   "definition_aliases": {
-    "537ff984606895ae8fbcee4ac84206c8a896e657a73fd30cea4c4dfc39084095": "bus_write8",
-    "81392946729d49cda59c15dc2b8a97be22c6bf807579b5d2e0740db3d799d5fe": "bus_read8"
+    "81392946729d49cda59c15dc2b8a97be22c6bf807579b5d2e0740db3d799d5fe": "bus_read8",
+    "cc4e9cbd914019afd3642811e6251e50705847ff42b105dd27b978c391827fd6": "bus_write8"
   },
   "import_aliases": {
     "2164b3463c82f584a3d93aec9970f50d47a4ae67e6c1def54ea0ddd00dddbd16": "mbc3_lower_rom_bank",
     "5e1cada5db9aac934d526a4a6c04432a3b5f0b844f63a51c0c4169c7c896cc5e": "apu_read8",
-    "7d27575e7f2ee69bf4ce8fe70270f4aa122099d6cfba06ac12e858fabc19c135": "apu_write8",
     "8682928785418e66e73498552b359291bc09279322fb8a600731aa644ddda7f2": "cart_romx_addr",
     "9b4904764a31d993f611ed7af2ad0c483c49d1a2d8082974b14417a748f9fb8a": "combine_hl",
     "a5bcc34f1b29be03483c423bc0720587e0cf0441d64c5ceea23f7cde721c2291": "serial_should_transfer",
-    "a7ede71dd2954958b75ee6aa98fd80bd57507d05522372559bb74c17bf9a7ba9": "mbc1_lower_rom_bank"
+    "a7ede71dd2954958b75ee6aa98fd80bd57507d05522372559bb74c17bf9a7ba9": "mbc1_lower_rom_bank",
+    "db601d9e71b960599f0e0019dd72dd9bd22b455e3a7ced097431ad9a7107d68f": "apu_write8"
   },
   "export_aliases": {
-    "537ff984606895ae8fbcee4ac84206c8a896e657a73fd30cea4c4dfc39084095": "bus_write8",
-    "81392946729d49cda59c15dc2b8a97be22c6bf807579b5d2e0740db3d799d5fe": "bus_read8"
+    "81392946729d49cda59c15dc2b8a97be22c6bf807579b5d2e0740db3d799d5fe": "bus_read8",
+    "cc4e9cbd914019afd3642811e6251e50705847ff42b105dd27b978c391827fd6": "bus_write8"
   },
   "display": {}
 }
