@@ -1,7 +1,7 @@
 {
   "format": "tacit-lock-v1",
   "package": {
-    "hash": "blake3:e0854ff2dffc74072bbf0a487fab82991cf784339f8d3f63224819b9ab5ad4e8"
+    "hash": "blake3:775ea0e0ec5757dd0c71cd4d9ebb64b71098878e47d12f07791f1b1438aa97d8"
   },
   "dependencies": [
     {

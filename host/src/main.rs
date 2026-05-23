@@ -88,6 +88,14 @@ impl TacboyCallbacks for Host {
         Ok(0)
     }
 
+    fn queue_audio(&mut self, samples: &[u8], byte_count: i64) -> Result<i64, Error> {
+        // Bound by the Tacit-supplied logical byte count: the buffer is sized
+        // for the largest chunk and trailing bytes may be stale.
+        let n = (byte_count as usize).min(samples.len());
+        self.frontend.queue_audio(&samples[..n]);
+        Ok(n as i64)
+    }
+
     fn poll_joypad(&mut self, selector: i64) -> Result<i64, Error> {
         let state = self.frontend.joypad_state();
         let mut result: u8 = 0x0F;

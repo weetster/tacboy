@@ -14,6 +14,7 @@ use std::os::raw::{c_int, c_void};
 use std::process::Command;
 use std::time::{Duration, Instant};
 
+use sdl2::audio::{AudioQueue, AudioSpecDesired};
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::PixelFormatEnum;
@@ -86,6 +87,12 @@ pub trait Frontend {
     fn joypad_state(&self) -> u8 {
         0
     }
+
+    /// Queue PCM audio samples for playback. `samples` is signed 16-bit
+    /// little-endian stereo at 48 kHz (4 bytes per frame). The default
+    /// implementation discards the samples, so headless and tui frontends
+    /// stay byte-for-byte identical to pre-audio behaviour.
+    fn queue_audio(&mut self, _samples: &[u8]) {}
 }
 
 /// Selectable by name, so `main` can map a `--frontend` flag to a value.
@@ -288,6 +295,9 @@ pub struct SdlFrontend {
     /// Bit-packed pressed-button state. Layout: bit0=Right, bit1=Left, bit2=Up,
     /// bit3=Down, bit4=A(Z), bit5=B(X), bit6=Select(Backspace), bit7=Start(Return)
     buttons: u8,
+    /// SDL audio queue at 48 kHz signed 16-bit little-endian stereo. None when
+    /// audio init failed — present_frame paces visually but audio is silent.
+    audio: Option<AudioQueue<i16>>,
 }
 
 impl SdlFrontend {
@@ -305,12 +315,31 @@ impl SdlFrontend {
             .build()
             .map_err(|e| format!("SDL canvas: {e}"))?;
         let event_pump = sdl.event_pump().map_err(|e| format!("SDL event pump: {e}"))?;
+        // Audio is optional: if init fails, presentation still works.
+        let audio = sdl.audio().ok().and_then(|audio_subsystem| {
+            let desired = AudioSpecDesired {
+                freq: Some(48000),
+                channels: Some(2),
+                samples: Some(512),
+            };
+            match audio_subsystem.open_queue::<i16, _>(None, &desired) {
+                Ok(queue) => {
+                    queue.resume();
+                    Some(queue)
+                }
+                Err(e) => {
+                    eprintln!("warning: SDL audio init failed ({e}); running silent");
+                    None
+                }
+            }
+        });
         Ok(Self {
             _sdl: sdl,
             canvas,
             event_pump,
             next_frame: None,
             buttons: 0,
+            audio,
         })
     }
 
@@ -386,6 +415,29 @@ impl Frontend for SdlFrontend {
 
     fn joypad_state(&self) -> u8 {
         self.buttons
+    }
+
+    fn queue_audio(&mut self, samples: &[u8]) {
+        let Some(queue) = self.audio.as_mut() else {
+            return;
+        };
+        // Cap SDL's pending audio so a fast emulator doesn't grow latency
+        // without bound. ~100 ms at 48 kHz stereo s16 is well over a frame's
+        // worth of samples and keeps lip-sync tight without underrunning.
+        const MAX_QUEUED_BYTES: u32 = 48_000 * 4 / 10;
+        if queue.size() > MAX_QUEUED_BYTES {
+            return;
+        }
+        // SDL expects an &[i16] slice; reinterpret the LE byte buffer.
+        let frames = samples.len() / 2;
+        if frames == 0 {
+            return;
+        }
+        let mut tmp: Vec<i16> = Vec::with_capacity(frames);
+        for chunk in samples.chunks_exact(2) {
+            tmp.push(i16::from_le_bytes([chunk[0], chunk[1]]));
+        }
+        let _ = queue.queue_audio(&tmp);
     }
 }
 

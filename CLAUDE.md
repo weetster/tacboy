@@ -42,6 +42,8 @@ handling, framebuffer presentation, and focused APU tests are all present.
 - For targeted syntax refreshes, prefer selective primer commands before
   reading the full primer: `tacit primer --search <term>`,
   `tacit primer --list-sections`, then `tacit primer --section <id>`.
+- `tacit primer --search` uses case-insensitive plain substring matching,
+  not regex.
 - Run `tacit primer` when you need the full Tacit-Lite language primer that
   matches this toolchain. Do not copy primer prose from another repository
   or another toolchain version.

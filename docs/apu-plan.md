@@ -114,7 +114,14 @@ Validation:
 
 ## Stage 6 - Mix and Queue PCM
 
-Objective: mix Tacit-owned channel output into a host-queued audio buffer.
+Status: complete on Tacit 0.7.10. Tacit owns a 2 KB `u8vec` PCM buffer
+(512 stereo s16 frames at 48 kHz) and a write-position cursor in APU
+i64 slot 29. `apu_step` was extended to take wave RAM and the PCM buffer;
+on every sample boundary it mixes via `apu_emit_sample` and returns 1 when
+the buffer fills, at which point `machine.tac` calls the host
+`queue_audio` capability. Headless/tui keep `queue_audio` as a no-op so
+CPU/PPU behaviour is unchanged; the SDL frontend opens a 48 kHz s16 stereo
+audio queue and feeds it the bytes Tacit produced.
 
 - Implement NR50 master volume and VIN bits as volume controls.
 - Implement NR51 left/right channel routing.
