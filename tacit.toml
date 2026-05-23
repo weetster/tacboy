@@ -11,7 +11,7 @@ collections = { hash = "blake3:618e92f562755167288bd23bc82a16a02035d39e2c2852e3f
 io = { hash = "blake3:624b3278c9e6fa5421589e8dcfa7b11e595a8566ade2d6a124ce6a10c0c6825d", source = { registry = "builtin", name = "tacit.io" } }
 
 [exports]
-run = "blake3:95cc6b9061b537cf629cd94497a795642c57bf424c23bfd9e3cdf96e0f8a89f6"
+run = "blake3:353026cddae7e89063bd211fb2118e687be218e2fa392bc12835fafe73e27227"
 
 [[tests]]
 name = "apu-register-masks"
@@ -48,3 +48,7 @@ target = "blake3:7ec76b1ff6fbdd684f920027446a683b4e7f5061c12d09afff5c9176cbcaf6c
 [[tests]]
 name = "apu-ch1-sweep"
 target = "blake3:0a0af63234c9ed347c646f9377c3def4cf76dd5a7cd31a3200e658db4a1ebf4c"
+
+[[tests]]
+name = "apu-ch2-freq"
+target = "blake3:39366b892c380b7cf6a0fe17499612162e31c35decc786d55598c686c2828b21"
