@@ -140,14 +140,58 @@ Validation:
 
 ## Stage 7 - Accuracy Pass
 
-Objective: tighten behavior against known APU edge cases after audible output
-works.
+Status: complete on Tacit 0.7.10 for the well-documented length/sweep
+quirks. APU i64 state grew from 30 to 31 slots to host slot 30 = "CH1
+sweep negate-calc-since-trigger" flag.
 
-- Audit trigger timing and length-counter reload quirks.
-- Audit sweep overflow disabling for channel 1.
-- Audit wave RAM access quirks if test ROMs require them.
-- Audit frame sequencer behavior when writing NR52/NR14/NR24/NR34/NR44.
-- Add APU test ROMs to the manual validation list if available locally.
+Landed:
+
+- NR52 power-off on DMG now preserves length counters in slots 7/16/21/24
+  (only channel-enable and channel-state slots are cleared, plus the
+  sweep negate-calc flag).
+- While APU is powered off, writes to NR11/NR21/NR31/NR41 (via the new
+  `apu_is_nrx1_addr` predicate) still route through
+  `apu_handle_length_write` to update length counters; other NR writes
+  remain ignored.
+- Extra length clock on NRx4 length-enable transition: new
+  `apu_handle_nrx4_length_enable` runs before the NR-vec store. When
+  enable goes 0->1 and the next frame-sequencer step is non-length-clock
+  and length > 0, length is decremented; if it reaches 0 with no
+  concurrent trigger, the channel is disabled.
+- Trigger-time length clock: each `apu_chN_trigger` reads the new NRx4
+  byte (already stored by `apu_write8`) and, when length-enable is 1 and
+  the next FS step is non-length-clock, decrements the just-reloaded
+  length once.
+- Sweep negate-mode clear: `apu_ch1_clock_sweep` and `apu_ch1_trigger`
+  set i64 slot 30 to 1 on any sweep calc performed in negate mode; the
+  new `apu_handle_nr10_write` runs on NR10 writes and disables CH1 when
+  the negate bit goes 1->0 after such a calc. The trigger function
+  clears slot 30 on every trigger.
+
+Deferred:
+
+- Wave RAM "returns current sample while CH3 playing" / DMG wave-write
+  windows: skipped because no APU test ROMs are available locally, so
+  the quirk has no driver to validate against.
+- Add APU test ROMs to the manual validation list: skipped for the same
+  reason; revisit when test ROMs land in the repo.
+- Effectful unit tests covering the new mutating helpers
+  (`apu_clear_powered_state`, `apu_handle_nrx4_length_enable`,
+  `apu_handle_nr10_write`, trigger-time length clocks): Tacit 0.7.10's
+  package-test surface accepts `Bool` test definitions without
+  per-definition effect annotations, and the value-type signature
+  `Bool / {Alloc, Mut}` does not parse. Two pure-logic tests landed
+  (`apu-nrx4-quirk-phases`, `apu-is-nrx1-addr`) covering the
+  decision-logic edges; deeper coverage of the mutating helpers
+  requires either toolchain support for effectful value tests or
+  ROM-based validation.
+
+Validation:
+
+- `tacit lock` / `tacit check . --format json` / `tacit test .`
+  (18 tests, all passing).
+- `tacit interface . --emit-library` regenerated.
+- `cargo build` in `host/` succeeds.
 
 ## Risks
 

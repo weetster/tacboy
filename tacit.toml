@@ -11,7 +11,7 @@ collections = { hash = "blake3:618e92f562755167288bd23bc82a16a02035d39e2c2852e3f
 io = { hash = "blake3:624b3278c9e6fa5421589e8dcfa7b11e595a8566ade2d6a124ce6a10c0c6825d", source = { registry = "builtin", name = "tacit.io" } }
 
 [exports]
-run = "blake3:6065e443475971154813ffca18200b60f96f8c232bd04aba3901994efb08c55f"
+run = "blake3:8d653d356e22a95b417c21d41a1eb20f770bc9f4d766f26c496392b162d09bfc"
 
 [[tests]]
 name = "apu-register-masks"
@@ -76,3 +76,11 @@ target = "blake3:b87c18159a6a83de3e53d9bb11115151db15b64bbbb30f11e3eebcbad03c192
 [[tests]]
 name = "apu-clamp"
 target = "blake3:281cd6b03612f8f73a8954841731fe44e9ebf448fec50cbe109b081f3c10264d"
+
+[[tests]]
+name = "apu-nrx4-quirk-phases"
+target = "blake3:7d9774967f5563fd02ef3922c88654e6e3ce494af057af1079b62ef7366151bc"
+
+[[tests]]
+name = "apu-is-nrx1-addr"
+target = "blake3:c8dc6fb14941c1734993ecd9190f095594424b1eea4f9ab1b2428af1976d19e5"
