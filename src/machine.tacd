@@ -1,9 +1,9 @@
 {
   "tacd_version": "1",
-  "targets_hash_blake3": "52c59056f2be3134f3c2cf6391dfe3c4ecfc058cd7c99d8ee83c6adfef0e8b2e",
+  "targets_hash_blake3": "8ff86d573426b0f7e1acbb9f988056d16a252d587e30aa2ad1a498e51c48311a",
   "unit_alias": "Machine",
   "definition_aliases": {
-    "f5580128309747014b4115cbfa02934144b10cd30fe83c366789b5dc4fb1280b": "run_machine"
+    "d464e1e81a6e34112399783ee240f9185f88cb7615323fbe868e06df71400fe2": "run_machine"
   },
   "import_aliases": {
     "00056c933d5e3efe19747d7c8340a9dd5787488b0511af3cd4178059869e2337": "alu_xor",
@@ -14,6 +14,7 @@
     "237457190eff50263ba54d19c6bddaf3c4e3bfe0955710fb8cadc2a129e37318": "interrupt_index_from_pending",
     "24bb80c6a22346319d07aee9f06a9a6905680ddf17ef25fbf5d8811f6790ea06": "set_de",
     "2c4dec99eaa38d53a104c10b01b0afce3962f96cf4eca5a0eca89bdd6c89de88": "alu_cp",
+    "333508ae8823c3f9c56894dc0efef8ceeb4056c3eef5b0a56537b06fecd5ff02": "init_reset_state",
     "35288b066005bf8f713b8f8e8484407c51fe38fbebf530aeb1572a453d97c891": "alu_rra",
     "375a15e1a49d2d834566b91c03569c1f7cc1912fbb1c5ec54e8abcf0d781c72c": "alu_daa",
     "3a2039f3c2efabf33c4e47fe9c24f283a505f79cfc768c1957c6e99d3472777e": "alu_add_sp_e",
@@ -52,7 +53,7 @@
     "f697d706c5dfe54cc92186bfcff84bbee4e6fb4c237a42e7c189ae3462b95328": "reg_de"
   },
   "export_aliases": {
-    "f5580128309747014b4115cbfa02934144b10cd30fe83c366789b5dc4fb1280b": "run_machine"
+    "d464e1e81a6e34112399783ee240f9185f88cb7615323fbe868e06df71400fe2": "run_machine"
   },
   "display": {}
 }
